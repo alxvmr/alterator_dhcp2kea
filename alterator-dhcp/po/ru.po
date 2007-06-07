@@ -1,0 +1,129 @@
+# Alterator dhcp module Russian translation.
+# Copyright (C) 2007 Grigory Batalov <bga@altlinux.org>
+# This file is distributed under the same license as the alterator-dhcp package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: alterator-dhcp 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-06-20 19:38+0400\n"
+"PO-Revision-Date: 2007-03-26 20:48+0400\n"
+"Last-Translator: Grigory Batalov <bga@altlinux.org>\n"
+"Language-Team: Russian <ru@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ui/html-messages.scm:1 backend3/template-dhcp:35
+msgid "DHCP server"
+msgstr "Сервер DHCP"
+
+#: ui/html-messages.scm:2 backend3/template-dhcp:36
+msgid "DHCP server administration"
+msgstr "Управление сервером DHCP"
+
+#: ui/html-messages.scm:3
+msgid "Subnets"
+msgstr "Подсети"
+
+#: ui/html-messages.scm:4
+msgid "New subnet"
+msgstr "Новая подсеть"
+
+#: ui/html-messages.scm:5
+msgid "edit subnet"
+msgstr "настроить подсеть"
+
+#: ui/html-messages.scm:6
+msgid "Remove selected"
+msgstr "Удалить выделенные"
+
+#: ui/html-messages.scm:7
+msgid "Add"
+msgstr "Добавить"
+
+#: ui/html-messages.scm:8
+msgid "Create"
+msgstr "Создать"
+
+#: ui/html-messages.scm:9
+msgid "Static hosts"
+msgstr "Статические адреса"
+
+#: ui/html-messages.scm:10
+msgid "Apply"
+msgstr "Принять"
+
+#: ui/html-messages.scm:11
+msgid "DHCP subnet settings"
+msgstr "Настройка подсети DHCP"
+
+#: ui/html-messages.scm:12
+msgid "start, stop or restart service"
+msgstr "запустить, остановить или перезапустить службу"
+
+#: backend3/template-dhcp:5
+msgid "alterator-dhcp"
+msgstr ""
+
+#: backend3/template-dhcp:37
+msgid "Network"
+msgstr "Сеть"
+
+#: backend3/dhcp:269
+msgid "Subnet"
+msgstr "Подсеть"
+
+#: backend3/dhcp:270
+msgid "Hostname"
+msgstr "Имя хоста"
+
+#: backend3/dhcp:271
+msgid "IP address"
+msgstr "IP адрес"
+
+#: backend3/dhcp:272
+msgid "MAC address"
+msgstr "MAC адрес"
+
+#: backend3/dhcp:279
+msgid "Netmask"
+msgstr "Маска сети"
+
+#: backend3/dhcp:280
+msgid "Domain"
+msgstr "Домен"
+
+#: backend3/dhcp:283
+msgid "Range"
+msgstr "Диапазон"
+
+#. print " routers (ipv4-address #t)"
+#. print " dns (ipv4-address #t)"
+#: backend3/dhcp:286
+msgid "Routers"
+msgstr "Шлюзы"
+
+#: backend3/dhcp:287
+msgid "DNS servers"
+msgstr "Сервера DNS"
+
+#: backend3/dhcp:288
+msgid "Lease time"
+msgstr "Срок выдачи"
+
+#: backend3/dhcp:289
+msgid "Max lease time"
+msgstr "Крайний срок выдачи"
+
+#: backend3/dhcp:324
+msgid "Such hostname is already specified"
+msgstr "Такое имя хоста уже указано"
+
+#: backend3/dhcp:328
+msgid "Such MAC address is already used"
+msgstr "Такой MAC-адрес уже используется"
+
+#: backend3/dhcp:342
+msgid "Such subnet is already specified"
+msgstr "Такая подсеть уже указана"

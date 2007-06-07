@@ -1,0 +1,48 @@
+#!/bin/sh -ef 
+
+_()
+{
+	LANG=${in_language%%;*}.utf8 gettext 'alterator-dhcp' "$1"
+}
+
+
+. /usr/share/alterator/build/backend3.sh
+
+on_message()
+{
+	case "$in_action" in
+		#information for renderer
+		template)
+			echo '('
+			echo ' template "form" '
+			if [ "$in__objects" = "/" ];then
+				echo ' translate "alterator-dhcp"'
+				echo ' url "dhcp-list.html"'
+				echo ' help "dhcp-list.html"'
+				[ "$in_orig_action" = "new" -a -n "$in_name" ] &&
+				    printf ' redirect "/dhcp/subnets/%s"' "$in_name"
+			else
+				echo ' template "form" '
+				echo ' url "dhcp-subnet.html"'
+				echo ' help "dhcp-subnet.html"'
+				echo ' redirect #f'
+				#echo ' redirect "/dhcp"'
+			fi
+			echo ')'
+			;;
+                info)
+                        echo '('
+                        printf ' title "%s"' "`_ "DHCP server"`"
+                        printf ' description "%s"' "`_ "DHCP server administration"`"
+                        printf ' group "%s"' "`_ "Network"`"
+                        echo ')'
+                        ;;
+		*)
+			echo '#f'
+			;;
+	esac
+}
+
+
+message_loop
+

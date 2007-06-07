@@ -1,0 +1,392 @@
+#!/bin/awk -f
+
+BEGIN {
+	DHCPD_CONF = "/etc/dhcp/dhcpd.conf"
+	SERVICE = "/sbin/service"
+	# split input fields by a colon
+	FS=":"
+	# set default language
+	LANGUAGE="en_US.UTF8"
+	# set translation domain
+	TEXTDOMAIN = "alterator-dhcp"
+	readmsg=0
+	LOGFILE="/var/log/configd.log"
+}
+
+# error reporting function
+function debug(text, errno) {
+	printf "%s " TEXTDOMAIN ": %s: %s\n", strftime("%B %d %H:%M:%S"), text, errno >> LOGFILE
+	fflush(LOGFILE)
+}
+
+# remove leading and trailing spaces
+function trim(arg) {
+	gsub(/^[[:space:]]+/,"", arg)
+	gsub(/[[:space:]]+$/,"", arg)
+	return arg
+}
+
+# search a regular expression in a file
+function grep(regex, file,		line) {
+	while ((error = getline line <file) > 0)
+		if (line ~ regex) {
+			close(file)
+			return 1
+		}
+	if (error == -1)
+		debug("Error reading file '" file "'", ERRNO)
+	close(file)
+	return 0
+}
+
+# filter hostname/mac/ip list from a config file
+function list_hosts(config,		error, line, hostname, list, inside, ip, mac) {
+	while ((error = getline line <config) > 0) {
+		if (line ~ /^#/ || line ~ /^[[:space:]]*$/)
+			continue
+		if (match(line, /^[[:space:]]*host[[:space:]]+([a-zA-Z0-9.-]+)[[:space:]]+{/, list)) {
+			hostname = list[1]
+			inside = 1
+		}
+		if (inside && match(line, /fixed-address[[:space:]]+([0-9.]+);/, list))
+			ip = list[1]
+		if (inside && match(line, /hardware[[:space:]]+ethernet[[:space:]]+([a-zA-Z0-9:]+);/, list))
+			mac = list[1]
+		if (inside && line ~ /}/) {
+			inside = 0
+			printf ("(\"%s\" hostname \"%s\" mac \"%s\" ip \"%s\")",
+				hostname, hostname, mac, ip)
+		}
+	}
+	if (error == -1)
+		debug("Error reading file '" config "'", ERRNO)
+	close(config)
+}
+
+# delete host record from a config file
+function delete_host(config, host,	cmd, tempfile, error, line, regex, inside) {
+        cmd = "mktemp"
+        cmd | getline tempfile
+        close(cmd)
+
+	regex = "^[[:space:]]*host[[:space:]]+" host "[[:space:]]+{"
+	while ((error = getline line <config) > 0) {
+		if (line ~ regex)
+			inside = 1
+		if (!inside)
+			print line >> tempfile
+		if (line ~ /}/)
+			inside = 0
+	}
+	if (error == -1)
+		debug("Error reading file '" config "'", ERRNO)
+	close(config)
+	close(tempfile)
+	system("cat " tempfile " > " config)
+        system("rm -f " tempfile)
+}
+
+# filter subnet name list from a config file
+function list_subnets(config,		error, line, list) {
+	while ((error = getline line <config) > 0)
+		if (match(line, /^[[:space:]]*subnet[[:space:]]+.*#[[:space:]]*([^[:space:]]+)/, list))
+			printf ("(\"%s\")", list[1])
+	if (error == -1)
+		debug("Error reading file '" config "'", ERRNO)
+	close(config)
+}
+
+# read subnet settings from a config file
+function read_subnet(config, name,	regex, error, line, list, subnet, netmask, inside, rangefrom, rangeto, domain, routers, dns, lease, maxlease) {
+	regex = "^[[:space:]]*subnet[[:space:]]+([0-9.]+)[[:space:]]+netmask[[:space:]]+([0-9.]+).*#[[:space:]]*" name
+	lease = maxlease = -1
+	while ((error = getline line <config) > 0) {
+
+		if (line ~ /^#/ || line ~ /^[[:space:]]*$/)
+			continue
+		if (match(line, regex, list)) {
+			subnet = list[1]
+			netmask = list[2]
+			inside = 1
+		}
+		if (!inside)
+			continue
+		if (match(line, "^[[:space:]]*range[[:space:]]+dynamic-bootp[[:space:]]+([0-9.]+)[[:space:]]+([0-9.]+);", list)) {
+			rangefrom = list[1]
+			rangeto = list[2]
+		}
+		if (match(line, "^[[:space:]]*option[[:space:]]+domain-name[[:space:]]+\"([a-zA-Z0-9.-]+)\";", list))
+			domain = list[1]
+		if (match(line, "^[[:space:]]*option[[:space:]]+routers[[:space:]]+(.+);", list))
+			routers = list[1]
+		if (match(line, "^[[:space:]]*option[[:space:]]+domain-name-servers[[:space:]]+(.+);", list))
+			dns = list[1]
+		if (match(line, "^[[:space:]]*default-lease-time[[:space:]]+([0-9]+);", list))
+			lease = list[1]
+		if (match(line, "^[[:space:]]*max-lease-time[[:space:]]+([0-9]+);", list))
+			maxlease = list[1]
+		if (line ~ /}/) {
+			inside = 0
+			printf ("(\"%s\" netmask \"%s\" rangefrom \"%s\" rangeto \"%s\" domain \"%s\" routers \"%s\" dns \"%s\"",
+				   name, netmask, rangefrom, rangeto, domain, routers, dns)
+			if (lease >= 0)
+				printf (" lease \"%d\"", lease)
+			if (maxlease >= 0)
+				printf (" maxlease \"%d\"", maxlease)
+			print ")"
+		}
+	}
+	if (error == -1)
+		debug("Error reading file '" config "'", ERRNO)
+	close(config)
+}
+
+# write subnet options to the config file
+function write_subnet(config, params,		list, name, cmd, tempfile, regex, error, line, inside) {
+	if (match(params["_objects"], /^subnets\/(.*)$/, list))
+		name = list[1]
+	else
+		return
+
+        cmd = "mktemp"
+        cmd | getline tempfile
+        close(cmd)
+
+	regex = "^[[:space:]]*subnet[[:space:]]+([0-9.]+)[[:space:]]+netmask[[:space:]]+([0-9.]+).*#[[:space:]]*" name
+	while ((error = getline line <config) > 0) {
+		delete list
+		if (match(line, regex, list))
+			inside = 1
+		if (!inside) {
+			print line >> tempfile
+			continue
+		}
+
+		if (inside && line ~ /}/) {
+			inside = 0
+
+			printf ("subnet %s netmask %s { # %s\n",
+				ipcalc(params["rangefrom"], params["rangeto"], params["netmask"]),
+				params["netmask"], name) >> tempfile
+			printf ("\toption subnet-mask %s;\n", params["netmask"]) >> tempfile
+			printf ("\trange dynamic-bootp %s %s;\n",
+				params["rangefrom"], params["rangeto"]) >> tempfile
+			printf ("\toption domain-name \"%s\";\n",
+				params["domain"]) >> tempfile
+			printf ("\toption routers %s;\n",
+				params["routers"]) >> tempfile
+			printf ("\toption domain-name-servers %s;\n",
+				params["dns"]) >> tempfile
+			printf ("\tdefault-lease-time %d;\n",
+				params["lease"]) >> tempfile
+			printf ("\tmax-lease-time %d;\n",
+				params["maxlease"]) >> tempfile
+			print "}" >> tempfile 
+		}
+	}
+	if (error == -1)
+		debug("Error reading file '" config "'", ERRNO)
+	close(config)
+	close(tempfile)
+	system("cat " tempfile " > " config)
+        system("rm -f " tempfile)
+}
+
+# delete subnet from a config file
+function delete_subnet(config, name,	cmd, tempfile, regex, error, line, inside) {
+        cmd = "mktemp"
+        cmd | getline tempfile
+        close(cmd)
+
+	regex = "^[[:space:]]*subnet[[:space:]]+([0-9.]+)[[:space:]]+netmask[[:space:]]+([0-9.]+).*#[[:space:]]*" name
+	while ((error = getline line <config) > 0) {
+		if (line ~ regex)
+			inside = 1
+		if (!inside)
+			print line >> tempfile
+		if (line ~ /}/)
+			inside = 0
+	}
+	if (error == -1)
+		debug("Error reading file '" config "'", ERRNO)
+	close(config)
+	close(tempfile)
+	system("cat " tempfile " > " config)
+        system("rm -f " tempfile)
+}
+
+# calculate subnet address from range start, range end and mask
+function ipcalc (ip1, ip2, mask,	list1, list2, list3, i, result) {
+	if (split(ip1, list1, /\./) < 4) {
+		debug("wrong ip", ip1)
+		return
+	}
+	if (split(ip2, list2, /\./) < 4) {
+		debug("wrong ip", ip2)
+		return
+	}
+	if (split(mask, list3, /\./) < 4) {
+		debug("wrong mask", mask)
+		return
+	}
+	for (i = 1; i <= 4; i++) {
+		if (i > 1)
+			result = result "."
+		result = result and(or(list1[i], list2[i]), list3[i])
+	}
+	return result
+}
+
+# show translation
+# overwriting locale settings
+function N_(text,			list, cmd, line) {
+	split(LANGUAGE, list, /:/)
+	cmd = "LANGUAGE=\"" LANGUAGE "\" LANG=\"" list[1] ".UTF8\" gettext " TEXTDOMAIN " \"" text "\""
+	cmd | getline line
+	close(cmd)
+	return line
+}
+
+# start message reading
+/^_message:begin$/ {
+	readmsg=1
+	next
+}
+
+# stop message reading
+/^_message:end$/ {
+	readmsg=0
+	#debug("==========", "==========")
+	#for (attribute in params)
+	#	debug("params[" attribute "]", params[attribute])
+	# overwrite current language
+	if (params["language"] != "")
+		LANGUAGE = gensub(/;/, ":", "g", params["language"])
+
+	switch (params["action"]) {
+		case "constraints":
+			print "("
+			printf " name (label \"%s\")", N_("Subnet")
+			printf " hostname (label \"%s\")", N_("Hostname")
+			printf " ip (label \"%s\")", N_("IP address")
+			printf " mac (label \"%s\")", N_("MAC address")
+			if (params["type"] == "hosts") {
+				print " hostname (required #t)"
+				print " ip (required #t ipv4-address #t)"
+				print " mac (required #t match \"^([[:alnum:]]{1,2}:){5}[[:alnum:]]{1,2}$\")"
+			}
+			if (params["_objects"] ~ /^subnets\y/) {
+				printf " netmask (label \"%s\")", N_("Netmask")
+				printf " domain (hostname #t label \"%s\")", N_("Domain")
+				print  " rangefrom (ipv4-address #t)"
+				print  " rangeto (ipv4-address #t)"
+				printf " range (label \"%s\")", N_("Range")
+				#print " routers (ipv4-address #t)"
+				#print " dns (ipv4-address #t)"
+				printf " routers (label \"%s\")", N_("Routers")
+				printf " dns (label \"%s\")", N_("DNS servers")
+				printf " lease (default \"21600\" label \"%s\")", N_("Lease time")
+				printf " maxlease (default \"43200\" label \"%s\")", N_("Max lease time")
+			}
+			print ")"
+			break
+		case "list":
+			print "("
+			switch (params["_objects"]) {
+				case /^hosts\y/:
+					list_hosts(DHCPD_CONF)
+					break
+				case /^subnets\y/:
+					list_subnets(DHCPD_CONF)
+					break
+			}
+			print ")"
+			break
+		case "read":
+			if (!match(params["_objects"], /^subnets\/(.*)$/, a)) {
+				print "()"
+				break
+			}
+
+			print "("
+			read_subnet(DHCPD_CONF, a[1])
+			print ")"
+			break
+		case "write":
+			write_subnet(DHCPD_CONF, params);
+			system(SERVICE " dhcpd reload &> /dev/null")
+			print "()"
+			break
+		case "new":
+			switch (params["type"]) {
+				case "hosts":
+					if (grep("^[[:space:]]*host[[:space:]]+" params["hostname"] "[[:space:]]*{$", DHCPD_CONF)) {
+						printf "(error \"%s\")", N_("Such hostname is already specified")
+						break
+					}
+					if (grep("^\thardware ethernet " params["mac"] ";$", DHCPD_CONF)) {
+						printf "(error \"%s\")", N_("Such MAC address is already used")
+						break
+					}
+
+					print "host " params["hostname"] " {" >> DHCPD_CONF
+					print "\thardware ethernet " params["mac"] ";" >> DHCPD_CONF
+					print "\tfixed-address " params["ip"] ";" >> DHCPD_CONF
+					print "}" >> DHCPD_CONF
+					close(DHCPD_CONF)
+					system(SERVICE " dhcpd reload &> /dev/null")
+					print "()"
+					break
+				case "subnets":
+					if (grep("^[[:space:]]*subnet[[:space:]]+.*#[[:space:]]*" params["name"], DHCPD_CONF)) {
+						printf "(error \"%s\")", N_("Such subnet is already specified")
+						break
+					}
+					print "subnet 192.168.0.0 netmask 255.255.255.0 { # " params["name"] >> DHCPD_CONF
+					print "}" >> DHCPD_CONF
+					close(DHCPD_CONF)
+					system(SERVICE " dhcpd reload &> /dev/null")
+					print "()"
+					break
+				default:
+					print "()"
+			}
+			break
+		case "delete":
+			switch (params["_objects"]) {
+				case /^hosts\y/:
+					match(params["_objects"], /^hosts\/(.*)$/, a)
+					delete_host(DHCPD_CONF, a[1])
+					system(SERVICE " dhcpd reload &> /dev/null")
+					break
+				case /^subnets\y/:
+					match(params["_objects"], /^subnets\/(.*)$/, a)
+					delete_subnet(DHCPD_CONF, a[1])
+					system(SERVICE " dhcpd reload &> /dev/null")
+					break
+				default:
+			}
+			print "()"
+			break
+		default:
+			print "#f"
+	}
+	fflush()
+	# delete attribute/value pairs before next cycle
+	delete params
+	#exit
+	next
+}
+
+# save attribute/value pairs
+{
+	if (! readmsg)
+		next
+	attribute=$1
+	value=$2
+	# join the rest of fields with a colon
+	for (n = 3; n <= NF; n++)
+		value=value ":" $n
+	value = gensub(/([^\\])\\n/, "\\1\n", "g", value)
+	params[attribute]=value
+}

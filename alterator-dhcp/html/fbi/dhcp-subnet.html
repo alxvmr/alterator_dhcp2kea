@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<!-- dhcp administration module -->
+<html>
+  <head>
+    <title>DHCP server settings - ALT Linux Console</title>
+    <link type="text/css" rel="stylesheet" href="/fbi/styles/dhcp.css"/>
+    <link type="text/css" rel="stylesheet" href="/fbi/styles/card-index.css"/>
+
+    <!-- ajax selector -->
+    <script src="/fbi/selector.js"/>
+  </head>
+  <body>
+    <h1><span translate="_">DHCP subnet settings</span></h1>
+    <local:a href="/chkconfig/dhcpd"><span translate="_">start, stop or restart service</span></local:a>
+    <form method="POST" action="?action=write">
+      <h2>
+	<div class="selector-name"><label for="name">Subnet</label>
+	<span class="alterator-label" name="name">unknown</span></div>
+      </h2>
+      <table border="0">
+	<tbody>
+	  <tr>
+	    <td><label for="range">Range</label></td>
+	    <td><input type="text" class="text" name="rangefrom"/> - <input type="text" class="text" name="rangeto"/></td>
+	  </tr>
+	  <tr>
+	    <td><label for="netmask">Netmask</label></td>
+	    <td><input type="text" class="text" name="netmask"/></td>
+	  </tr>
+	  <tr>
+	    <td><label for="domain">Domain</label></td>
+	    <td><input type="text" class="text" name="domain"/></td>
+	  </tr>
+	  <tr>
+	    <td><label for="routers">Routers</label></td>
+	    <td><input type="text" class="text" name="routers"/></td>
+	  </tr>
+	  <tr>
+	    <td><label for="dns">DNS servers</label></td>
+	    <td><input type="text" class="text" name="dns"/></td>
+	  </tr>
+	  <tr>
+	    <td><label for="lease">Lease time</label></td>
+	    <td><input type="text" class="text" name="lease"/></td>
+	  </tr>
+	  <tr>
+	    <td><label for="maxlease">Max lease time</label></td>
+	    <td><input type="text" class="text" name="maxlease"/></td>
+	  </tr>
+	</tbody>
+      </table>
+      <input type="submit" value="Apply" class="btn"/>
+    </form>
+
+  </body>
+</html>

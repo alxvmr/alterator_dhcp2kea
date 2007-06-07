@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<!-- dhcp administration module -->
+<html>
+  <head>
+    <title>DHCP server settings - ALT Linux Console</title>
+    <link type="text/css" rel="stylesheet" href="/fbi/styles/dhcp.css"/>
+    <link type="text/css" rel="stylesheet" href="/fbi/styles/card-index.css"/>
+
+    <!-- ajax selector -->
+    <script src="/fbi/selector.js"/>
+  </head>
+  <body>
+    <h1><span translate="_">DHCP server</span></h1>
+    <local:a href="/chkconfig/dhcpd"><span translate="_">start, stop or restart service</span></local:a>
+    <h2><span translate="_">Subnets</span></h2>
+    <form method="POST" highlight-required="no" action="?action=delete">
+      <table class="server-list">
+	<thead>
+	  <tr>
+	    <th>&nbsp;</th>
+	    <th><label for="name">Subnet</label></th>
+	    <th>&nbsp;</th>
+	  </tr>
+	</thead>
+	<tbody optionlist="/subnets" class="alterator-list">
+	  <tr>
+	    <td><input type="checkbox" name="delete"/></td>
+	    <td nowrap="yes"><span class="alterator-label" name="name"></span></td>
+	    <td nowrap="yes">
+	      <a href="" class="alterator-ref">
+	      <span translate="_">edit subnet</span></a>
+	    </td>
+	  </tr>
+	</tbody>
+      </table>
+      <input type="submit" value="Remove selected" class="btn"/>
+    </form>
+    <hr/>
+    <form method="POST" action="?action=new&amp;type=subnets">
+      <span translate="_">New subnet</span>
+      <input type="text" name="name" class="text" />
+      <input type="submit" value="Create" class="btn"/>
+    </form>
+    <form method="POST" action="?action=delete"  highlight-required="no">
+      <h2><span translate="_">Static hosts</span></h2>
+      <table class="server-list">
+	<thead>
+	  <tr>
+	    <th>&nbsp;</th>
+	    <th><label for="hostname">Hostname</label></th>
+	    <th><label for="ip">IP address</label></th>
+	    <th><label for="mac">MAC address</label></th>
+	  </tr>
+	</thead>
+	<tbody optionlist="/hosts" class="alterator-list">
+	  <tr>
+	    <td><input type="checkbox" name="delete"/></td>
+	    <td nowrap="yes"><span class="alterator-label" name="hostname"></span></td>
+	    <td nowrap="yes"><span class="alterator-label" name="ip"></span></td>
+	    <td nowrap="yes"><span class="alterator-label" name="mac"></span></td>
+	  </tr>
+	</tbody>
+      </table>
+      <input type="submit" value="Remove selected" class="btn"/>
+    </form>
+    <hr/>
+    <form method="POST" action="?action=new&amp;type=hosts">
+      <table>
+	<tbody>
+	  <tr>
+	    <td><label for="hostname">Hostname</label></td>
+	    <td><input type="text" class="text" name="hostname"/></td>
+	  </tr>
+	  <tr>
+	    <td><label for="ip">IP address</label></td>
+	    <td><input type="text" class="text" name="ip"/></td>
+	  </tr>
+	  <tr>
+	    <td><label for="mac">MAC address</label></td>
+	    <td><input type="text" class="text" name="mac"/></td>
+	  </tr>
+	</tbody>
+      </table>
+      <input type="submit" value="Add" class="btn"/>
+    </form>
+    <br/>
+
+  </body>
+</html>
