@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Categories=X-Alterator-Servers
+Icon=dhcp
+Terminal=false
+Name=DHCP server
+Name[ru_RU]=DHCP сервер
+Name[uk_UA]=DHCP сервер
+X-Alterator-URI=/dhcp
+X-Alterator-UI=html

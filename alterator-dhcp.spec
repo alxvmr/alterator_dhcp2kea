@@ -1,6 +1,6 @@
 Name: alterator-dhcp
 Version: 0.1
-Release: alt1
+Release: alt2
 Packager: Grigory Batalov <bga@altlinux.ru>
 
 Summary: alterator module for dhcp conf file editing
@@ -31,13 +31,18 @@ DHCP configuration alterator module
 
 %install
 %makeinstall HTMLROOT=%buildroot%_var/www/
+install -D -m644 applications/dhcp.desktop %buildroot/%_datadir/alterator/applications/dhcp.desktop
 %find_lang %name
 
 %files -f %name.lang
 %_var/www/html/*
 %_alterator_backend3dir/*
+%_datadir/alterator/applications/*
 
 %changelog
+* Mon Jul 09 2007 Grigory Batalov <bga@altlinux.ru> 0.1-alt2
+- Switch to new menu system. 
+
 * Thu Jun 07 2007 Grigory Batalov <bga@altlinux.ru> 0.1-alt1
 - Specfile cleanup.
 - Backend rewritten in Awk.
