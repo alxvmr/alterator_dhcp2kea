@@ -16,7 +16,7 @@ msgstr ""
 
 #: ui/html-messages.scm:1 backend3/template-dhcp:35
 msgid "DHCP server"
-msgstr "Сервер DHCP"
+msgstr "DHCP-сервер"
 
 #: ui/html-messages.scm:2 backend3/template-dhcp:36
 msgid "DHCP server administration"
@@ -80,11 +80,11 @@ msgstr "Имя хоста"
 
 #: backend3/dhcp:271
 msgid "IP address"
-msgstr "IP адрес"
+msgstr "IP-адрес"
 
 #: backend3/dhcp:272
 msgid "MAC address"
-msgstr "MAC адрес"
+msgstr "MAC-адрес"
 
 #: backend3/dhcp:279
 msgid "Netmask"
