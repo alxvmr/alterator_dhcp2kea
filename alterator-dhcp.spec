@@ -41,7 +41,7 @@ install -D -m644 applications/dhcp.desktop %buildroot/%_datadir/alterator/applic
 
 %changelog
 * Mon Jul 09 2007 Grigory Batalov <bga@altlinux.ru> 0.1-alt2
-- Switch to new menu system. 
+- Switch to new menu system.
 
 * Thu Jun 07 2007 Grigory Batalov <bga@altlinux.ru> 0.1-alt1
 - Specfile cleanup.

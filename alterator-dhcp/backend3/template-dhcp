@@ -15,16 +15,15 @@ on_message()
 		template)
 			echo '('
 			echo ' template "form" '
+			echo ' help "dhcp.html"'
 			if [ "$in__objects" = "/" ];then
 				echo ' translate "alterator-dhcp"'
 				echo ' url "dhcp-list.html"'
-				echo ' help "dhcp-list.html"'
 				[ "$in_orig_action" = "new" -a -n "$in_name" ] &&
 				    printf ' redirect "/dhcp/subnets/%s"' "$in_name"
 			else
 				echo ' template "form" '
 				echo ' url "dhcp-subnet.html"'
-				echo ' help "dhcp-subnet.html"'
 				echo ' redirect #f'
 				#echo ' redirect "/dhcp"'
 			fi
