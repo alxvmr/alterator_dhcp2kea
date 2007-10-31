@@ -318,6 +318,10 @@ function N_(text,			list, cmd, line) {
 			print "()"
 			break
 		case "new":
+			if (!grep("\\yddns-update-style\\y", DHCPD_CONF)) {
+				print "ddns-update-style none;" >> DHCPD_CONF
+				close(DHCPD_CONF)
+			}
 			switch (params["type"]) {
 				case "hosts":
 					if (grep("^[[:space:]]*host[[:space:]]+" params["hostname"] "[[:space:]]*{$", DHCPD_CONF)) {
