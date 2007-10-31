@@ -198,7 +198,7 @@ function delete_subnet(config, name,	cmd, tempfile, regex, error, line, inside) 
         cmd | getline tempfile
         close(cmd)
 
-	regex = "^[[:space:]]*subnet[[:space:]]+([0-9.]+)[[:space:]]+netmask[[:space:]]+([0-9.]+).*#[[:space:]]*" name
+	regex = "^[[:space:]]*subnet[[:space:]]+([0-9.]+)?[[:space:]]+netmask[[:space:]]+([0-9.]+).*#[[:space:]]*" name
 	while ((error = getline line <config) > 0) {
 		if (line ~ regex)
 			inside = 1
