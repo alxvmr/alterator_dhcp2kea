@@ -1,6 +1,6 @@
 Name: alterator-dhcp
 Version: 0.1
-Release: alt2
+Release: alt3
 Packager: Grigory Batalov <bga@altlinux.ru>
 
 Summary: alterator module for dhcp conf file editing
@@ -40,6 +40,12 @@ install -D -m644 applications/dhcp.desktop %buildroot/%_datadir/alterator/applic
 %_datadir/alterator/applications/*
 
 %changelog
+* Thu Dec 13 2007 Grigory Batalov <bga@altlinux.ru> 0.1-alt3
+- Use dash in "DHCP server", "IP address" and "MAC address" translation.
+- Russian help page.
+- Add missing "ddns-update-style" to the config.
+- Fix empty subnet deletion.
+
 * Mon Jul 09 2007 Grigory Batalov <bga@altlinux.ru> 0.1-alt2
 - Switch to new menu system.
 
