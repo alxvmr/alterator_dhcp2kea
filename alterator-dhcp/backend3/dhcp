@@ -171,12 +171,15 @@ function write_subnet(config, params,		list, name, cmd, tempfile, regex, error, 
 			printf ("\toption subnet-mask %s;\n", params["netmask"]) >> tempfile
 			printf ("\trange dynamic-bootp %s %s;\n",
 				params["rangefrom"], params["rangeto"]) >> tempfile
-			printf ("\toption domain-name \"%s\";\n",
-				params["domain"]) >> tempfile
-			printf ("\toption routers %s;\n",
-				params["routers"]) >> tempfile
-			printf ("\toption domain-name-servers %s;\n",
-				params["dns"]) >> tempfile
+			if (params["domain"])
+					printf ("\toption domain-name \"%s\";\n",
+							params["domain"]) >> tempfile
+			if (params["routers"])
+					printf ("\toption routers %s;\n",
+							params["routers"]) >> tempfile
+			if (params["dns"])
+					printf ("\toption domain-name-servers %s;\n",
+							params["dns"]) >> tempfile
 			printf ("\tdefault-lease-time %d;\n",
 				params["lease"]) >> tempfile
 			printf ("\tmax-lease-time %d;\n",
@@ -217,6 +220,9 @@ function delete_subnet(config, name,	cmd, tempfile, regex, error, line, inside) 
 
 # calculate subnet address from range start, range end and mask
 function ipcalc (ip1, ip2, mask,	list1, list2, list3, i, result) {
+	if (!mask)
+			mask = "255.255.255.255"
+
 	if (split(ip1, list1, /\./) < 4) {
 		debug("wrong ip", ip1)
 		return
@@ -271,20 +277,18 @@ function N_(text,			list, cmd, line) {
 			printf " ip (label \"%s\")", N_("IP address")
 			printf " mac (label \"%s\")", N_("MAC address")
 			if (params["type"] == "hosts") {
-				print " hostname (required #t)"
-				print " ip (required #t ipv4-address #t)"
-				print " mac (required #t match \"^([[:alnum:]]{1,2}:){5}[[:alnum:]]{1,2}$\")"
+				printf " hostname (label \"%s\" required #t)", N_("Hostname")
+				printf " ip (label \"%s\" required #t ipv4-address #t)", N_("IP address")
+				printf " mac (label \"%s\" required #t match \"^([[:alnum:]]{1,2}:){5}[[:alnum:]]{1,2}$\")", N_("MAC address")
 			}
 			if (params["_objects"] ~ /^subnets\y/) {
-				printf " netmask (label \"%s\")", N_("Netmask")
+				printf " netmask (label \"%s\" required #t ipv4-address #t)", N_("Netmask")
 				printf " domain (hostname #t label \"%s\")", N_("Domain")
-				print  " rangefrom (ipv4-address #t)"
-				print  " rangeto (ipv4-address #t)"
+				printf " rangefrom (label \"%s\" required #t ipv4-address #t)", N_("Range")
+				printf " rangeto (label \"%s\" required #t ipv4-address #t)", N_("Range")
 				printf " range (label \"%s\")", N_("Range")
-				#print " routers (ipv4-address #t)"
-				#print " dns (ipv4-address #t)"
-				printf " routers (label \"%s\")", N_("Routers")
-				printf " dns (label \"%s\")", N_("DNS servers")
+				printf " routers (label \"%s\" ipv4-address #t)", N_("Routers")
+				printf " dns (label \"%s\" ipv4-address #t)", N_("DNS servers")
 				printf " lease (default \"21600\" label \"%s\")", N_("Lease time")
 				printf " maxlease (default \"43200\" label \"%s\")", N_("Max lease time")
 			}
