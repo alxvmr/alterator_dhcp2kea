@@ -1,6 +1,6 @@
 Name: alterator-dhcp
 Version: 0.1
-Release: alt4
+Release: alt4.M40.1
 Packager: Grigory Batalov <bga@altlinux.ru>
 
 Summary: alterator module for dhcp conf file editing
@@ -40,6 +40,9 @@ install -D -m644 applications/dhcp.desktop %buildroot/%_datadir/alterator/applic
 %_datadir/alterator/applications/*
 
 %changelog
+* Thu May 15 2008 Grigory Batalov <bga@altlinux.ru> 0.1-alt4.M40.1
+- Backport to branch 4.0.
+
 * Fri Feb 15 2008 Grigory Batalov <bga@altlinux.ru> 0.1-alt4
 - Set more restrictions on subnet parameters.
 
