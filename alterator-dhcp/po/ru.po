@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alterator-dhcp 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-04 16:57+0300\n"
+"POT-Creation-Date: 2008-05-28 18:59+0400\n"
 "PO-Revision-Date: 2007-03-26 20:48+0400\n"
 "Last-Translator: Grigory Batalov <bga@altlinux.org>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -18,91 +18,104 @@ msgstr ""
 msgid "DHCP server"
 msgstr "DHCP-сервер"
 
-#: ui/dhcp/html-messages.scm:2
-msgid "DHCP server administration"
-msgstr "Управление сервером DHCP"
+#: ui/dhcp/html-messages.scm:2 ui/dhcp/html-messages.scm:12
+msgid "start, stop or restart service"
+msgstr "запустить, остановить или перезапустить службу"
 
 #: ui/dhcp/html-messages.scm:3
 msgid "Subnets"
 msgstr "Подсети"
 
 #: ui/dhcp/html-messages.scm:4
-msgid "New subnet"
-msgstr "Новая подсеть"
-
-#: ui/dhcp/html-messages.scm:5
 msgid "edit subnet"
 msgstr "настроить подсеть"
 
-#: ui/dhcp/html-messages.scm:6
+#: ui/dhcp/html-messages.scm:5 ui/dhcp/html-messages.scm:9
 msgid "Remove selected"
 msgstr "Удалить выделенные"
 
-#: ui/dhcp/html-messages.scm:7
-msgid "Add"
-msgstr "Добавить"
+#: ui/dhcp/html-messages.scm:6
+msgid "New subnet"
+msgstr "Новая подсеть"
 
-#: ui/dhcp/html-messages.scm:8
+#: ui/dhcp/html-messages.scm:7
 msgid "Create"
 msgstr "Создать"
 
-#: ui/dhcp/html-messages.scm:9
+#: ui/dhcp/html-messages.scm:8
 msgid "Static hosts"
 msgstr "Статические адреса"
 
 #: ui/dhcp/html-messages.scm:10
-msgid "Apply"
-msgstr "Принять"
+msgid "Add"
+msgstr "Добавить"
 
 #: ui/dhcp/html-messages.scm:11
 msgid "DHCP subnet settings"
 msgstr "Настройка подсети DHCP"
 
-#: ui/dhcp/html-messages.scm:12
-msgid "start, stop or restart service"
-msgstr "запустить, остановить или перезапустить службу"
+#: ui/dhcp/html-messages.scm:13
+msgid "Apply"
+msgstr "Принять"
+
+#: backend3/dhcp:275
+msgid "Subnet"
+msgstr "Подсеть"
+
+#: backend3/dhcp:276 backend3/dhcp:280
+msgid "Hostname"
+msgstr "Имя хоста"
+
+#: backend3/dhcp:277 backend3/dhcp:281
+msgid "IP address"
+msgstr "IP-адрес"
+
+#: backend3/dhcp:278 backend3/dhcp:282
+msgid "MAC address"
+msgstr "MAC-адрес"
+
+#: backend3/dhcp:285
+msgid "Netmask"
+msgstr "Маска сети"
+
+#: backend3/dhcp:286
+msgid "Domain"
+msgstr "Домен"
+
+#: backend3/dhcp:287 backend3/dhcp:288 backend3/dhcp:289
+msgid "Range"
+msgstr "Диапазон"
+
+#: backend3/dhcp:290
+msgid "Routers"
+msgstr "Шлюзы"
+
+#: backend3/dhcp:291
+msgid "DNS servers"
+msgstr "Сервера DNS"
+
+#: backend3/dhcp:292
+msgid "Lease time"
+msgstr "Срок выдачи"
+
+#: backend3/dhcp:293
+msgid "Max lease time"
+msgstr "Крайний срок выдачи"
+
+#: backend3/dhcp:332
+msgid "Such hostname is already specified"
+msgstr "Такое имя хоста уже указано"
+
+#: backend3/dhcp:336
+msgid "Such MAC address is already used"
+msgstr "Такой MAC-адрес уже используется"
+
+#: backend3/dhcp:350
+msgid "Such subnet is already specified"
+msgstr "Такая подсеть уже указана"
+
+#~ msgid "DHCP server administration"
+#~ msgstr "Управление сервером DHCP"
 
 #~ msgid "Network"
 #~ msgstr "Сеть"
-
-#~ msgid "Subnet"
-#~ msgstr "Подсеть"
-
-#~ msgid "Hostname"
-#~ msgstr "Имя хоста"
-
-#~ msgid "IP address"
-#~ msgstr "IP-адрес"
-
-#~ msgid "MAC address"
-#~ msgstr "MAC-адрес"
-
-#~ msgid "Netmask"
-#~ msgstr "Маска сети"
-
-#~ msgid "Domain"
-#~ msgstr "Домен"
-
-#~ msgid "Range"
-#~ msgstr "Диапазон"
-
-#~ msgid "Routers"
-#~ msgstr "Шлюзы"
-
-#~ msgid "DNS servers"
-#~ msgstr "Сервера DNS"
-
-#~ msgid "Lease time"
-#~ msgstr "Срок выдачи"
-
-#~ msgid "Max lease time"
-#~ msgstr "Крайний срок выдачи"
-
-#~ msgid "Such hostname is already specified"
-#~ msgstr "Такое имя хоста уже указано"
-
-#~ msgid "Such MAC address is already used"
-#~ msgstr "Такой MAC-адрес уже используется"
-
-#~ msgid "Such subnet is already specified"
-#~ msgstr "Такая подсеть уже указана"

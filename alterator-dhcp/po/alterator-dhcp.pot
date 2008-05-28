@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-04 16:57+0300\n"
+"POT-Creation-Date: 2008-05-28 18:59+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,8 +20,8 @@ msgstr ""
 msgid "DHCP server"
 msgstr ""
 
-#: ui/dhcp/html-messages.scm:2
-msgid "DHCP server administration"
+#: ui/dhcp/html-messages.scm:2 ui/dhcp/html-messages.scm:12
+msgid "start, stop or restart service"
 msgstr ""
 
 #: ui/dhcp/html-messages.scm:3
@@ -29,37 +29,89 @@ msgid "Subnets"
 msgstr ""
 
 #: ui/dhcp/html-messages.scm:4
-msgid "New subnet"
-msgstr ""
-
-#: ui/dhcp/html-messages.scm:5
 msgid "edit subnet"
 msgstr ""
 
-#: ui/dhcp/html-messages.scm:6
+#: ui/dhcp/html-messages.scm:5 ui/dhcp/html-messages.scm:9
 msgid "Remove selected"
 msgstr ""
 
-#: ui/dhcp/html-messages.scm:7
-msgid "Add"
+#: ui/dhcp/html-messages.scm:6
+msgid "New subnet"
 msgstr ""
 
-#: ui/dhcp/html-messages.scm:8
+#: ui/dhcp/html-messages.scm:7
 msgid "Create"
 msgstr ""
 
-#: ui/dhcp/html-messages.scm:9
+#: ui/dhcp/html-messages.scm:8
 msgid "Static hosts"
 msgstr ""
 
 #: ui/dhcp/html-messages.scm:10
-msgid "Apply"
+msgid "Add"
 msgstr ""
 
 #: ui/dhcp/html-messages.scm:11
 msgid "DHCP subnet settings"
 msgstr ""
 
-#: ui/dhcp/html-messages.scm:12
-msgid "start, stop or restart service"
+#: ui/dhcp/html-messages.scm:13
+msgid "Apply"
+msgstr ""
+
+#: backend3/dhcp:275
+msgid "Subnet"
+msgstr ""
+
+#: backend3/dhcp:276 backend3/dhcp:280
+msgid "Hostname"
+msgstr ""
+
+#: backend3/dhcp:277 backend3/dhcp:281
+msgid "IP address"
+msgstr ""
+
+#: backend3/dhcp:278 backend3/dhcp:282
+msgid "MAC address"
+msgstr ""
+
+#: backend3/dhcp:285
+msgid "Netmask"
+msgstr ""
+
+#: backend3/dhcp:286
+msgid "Domain"
+msgstr ""
+
+#: backend3/dhcp:287 backend3/dhcp:288 backend3/dhcp:289
+msgid "Range"
+msgstr ""
+
+#: backend3/dhcp:290
+msgid "Routers"
+msgstr ""
+
+#: backend3/dhcp:291
+msgid "DNS servers"
+msgstr ""
+
+#: backend3/dhcp:292
+msgid "Lease time"
+msgstr ""
+
+#: backend3/dhcp:293
+msgid "Max lease time"
+msgstr ""
+
+#: backend3/dhcp:332
+msgid "Such hostname is already specified"
+msgstr ""
+
+#: backend3/dhcp:336
+msgid "Such MAC address is already used"
+msgstr ""
+
+#: backend3/dhcp:350
+msgid "Such subnet is already specified"
 msgstr ""

@@ -21,3 +21,4 @@ include /usr/share/alterator/build/backend.mak
 include /usr/share/alterator/build/fbi.mak
 include /usr/share/alterator/build/html-messages.mak
 
+HTML_PO_TEMPLATE=ui/$(NAME)/html-messages.scm
