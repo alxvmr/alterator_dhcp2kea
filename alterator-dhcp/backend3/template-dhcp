@@ -1,11 +1,5 @@
 #!/bin/sh -ef 
 
-_()
-{
-	LANG=${in_language%%;*}.utf8 gettext 'alterator-dhcp' "$1"
-}
-
-
 . /usr/share/alterator/build/backend3.sh
 
 on_message()
@@ -15,7 +9,6 @@ on_message()
 		template)
 			echo '('
 			echo ' template "form" '
-			echo ' help "dhcp.html"'
 			echo ' translate "alterator-dhcp"'
 			if [ "$in__objects" = "/" ];then
 				echo ' url "dhcp-list.html"'
@@ -26,13 +19,6 @@ on_message()
 			fi
 			echo ')'
 			;;
-                info)
-                        echo '('
-                        printf ' title "%s"' "`_ "DHCP server"`"
-                        printf ' description "%s"' "`_ "DHCP server administration"`"
-                        printf ' group "%s"' "`_ "Network"`"
-                        echo ')'
-                        ;;
 		*)
 			echo '#f'
 			;;

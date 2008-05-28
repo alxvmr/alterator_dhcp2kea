@@ -7,7 +7,7 @@ AWK_TRANSLATE = $(shell [ -d backend3 ] && for i in backend3/*; do file $$i | fg
 
 all: 
 clean: 
-install: install-backend install-po install-html
+install: install-backend install-po install-html install-ui
 
 awk-update-po:
 	$(XGETTEXT) --join-existing --add-comments -o$(POT_NAME) -L awk --keyword=N_ $(AWK_TRANSLATE)

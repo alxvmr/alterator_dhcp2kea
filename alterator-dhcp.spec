@@ -1,6 +1,8 @@
+%define _altdata_dir %_datadir/alterator
+
 Name: alterator-dhcp
 Version: 0.1
-Release: alt4.M40.1
+Release: alt5.M41.1
 Packager: Grigory Batalov <bga@altlinux.ru>
 
 Summary: alterator module for dhcp conf file editing
@@ -14,8 +16,9 @@ BuildArch: noarch
 
 Requires: alterator >= 2.9 gettext dhcp-server
 Requires: alterator-chkconfig
+Conflicts: alterator-fbi < 0.15-alt2
 
-BuildPreReq: alterator >= 2.9-alt0.10, alterator-fbi >= 0.7-alt1
+BuildPreReq: alterator >= 3.1, alterator-fbi >= 0.7-alt1
 
 # Automatically added by buildreq on Mon Jul 11 2005 (-bi)
 BuildRequires: alterator
@@ -31,15 +34,20 @@ DHCP configuration alterator module
 
 %install
 %makeinstall HTMLROOT=%buildroot%_var/www/
-install -D -m644 applications/dhcp.desktop %buildroot/%_datadir/alterator/applications/dhcp.desktop
 %find_lang %name
 
 %files -f %name.lang
+%_altdata_dir/applications/*
+%_altdata_dir/ui/*/
+%_altdata_dir/help/*/*
 %_var/www/html/*
 %_alterator_backend3dir/*
-%_datadir/alterator/applications/*
 
 %changelog
+* Wed May 28 2008 Grigory Batalov <bga@altlinux.ru> 0.1-alt5.M41.1
+- Change help paths to the new style (slazav@).
+- Backport to branch 4.1.
+
 * Thu May 15 2008 Grigory Batalov <bga@altlinux.ru> 0.1-alt4.M40.1
 - Backport to branch 4.0.
 

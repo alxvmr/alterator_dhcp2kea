@@ -9,3 +9,4 @@ Name[ru_RU]=DHCP-сервер
 Name[uk_UA]=DHCP-сервер
 X-Alterator-URI=/dhcp
 X-Alterator-UI=html
+X-Alterator-Help=dhcp
