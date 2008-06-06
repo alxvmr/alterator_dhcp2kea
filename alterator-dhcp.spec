@@ -2,7 +2,7 @@
 
 Name: alterator-dhcp
 Version: 0.1
-Release: alt6.M41.1
+Release: alt8
 Packager: Grigory Batalov <bga@altlinux.ru>
 
 Summary: alterator module for dhcp conf file editing
@@ -44,6 +44,9 @@ DHCP configuration alterator module
 %_alterator_backend3dir/*
 
 %changelog
+* Fri Jun 06 2008 Grigory Batalov <bga@altlinux.ru> 0.1-alt8
+- Replace label tag with a translation on the help page.
+
 * Wed May 28 2008 Grigory Batalov <bga@altlinux.ru> 0.1-alt6.M41.1
 - Service restart link update.
 - Hide service restart link on subnet configuration page.
