@@ -2,7 +2,7 @@
 
 Name: alterator-dhcp
 Version: 0.1
-Release: alt8
+Release: alt9
 Packager: Grigory Batalov <bga@altlinux.ru>
 
 Summary: alterator module for dhcp conf file editing
@@ -15,7 +15,7 @@ Source: %name-%version.tar
 BuildArch: noarch
 
 Requires: alterator >= 2.9 gettext dhcp-server
-Requires: alterator-chkconfig
+Requires: alterator-services
 Conflicts: alterator-fbi < 0.15-alt2
 
 BuildPreReq: alterator >= 3.1, alterator-fbi >= 0.7-alt1
@@ -44,6 +44,9 @@ DHCP configuration alterator module
 %_alterator_backend3dir/*
 
 %changelog
+* Tue Jun 17 2008 Grigory Batalov <bga@altlinux.ru> 0.1-alt9
+- Require alterator-services instead of alterator-chkconfig.
+
 * Fri Jun 06 2008 Grigory Batalov <bga@altlinux.ru> 0.1-alt8
 - Replace label tag with a translation on the help page.
 
