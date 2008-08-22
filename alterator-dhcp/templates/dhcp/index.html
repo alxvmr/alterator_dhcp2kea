@@ -1,16 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 <!-- dhcp administration module -->
-<html>
+<html wf="form">
   <head>
-    <title>DHCP server settings - ALT Linux Console</title>
-    <link type="text/css" rel="stylesheet" href="/fbi/styles/dhcp.css"/>
-    <link type="text/css" rel="stylesheet" href="/fbi/styles/card-index.css"/>
-
-    <!-- ajax selector -->
-    <script src="/fbi/selector.js"/>
+    <link type="text/css" rel="stylesheet" href="/design/styles/dhcp.css"/>
   </head>
   <body>
-    <h1><span translate="_">DHCP server</span></h1>
     <a href="/services?name=dhcpd"><span translate="_">start, stop or restart service</span></a>
     <h2><span translate="_">Subnets</span></h2>
     <form method="POST" highlight-required="no" action="?action=delete">
@@ -82,7 +76,5 @@
       </table>
       <input type="submit" value="Add" class="btn"/>
     </form>
-    <br/>
-
   </body>
 </html>
