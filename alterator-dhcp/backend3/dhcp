@@ -143,10 +143,10 @@ function read_subnet(config, name,	regex, error, line, list, subnet, netmask, in
 
 # write subnet options to the config file
 function write_subnet(config, params,		list, name, cmd, tempfile, regex, error, line, inside) {
-	if (match(params["_objects"], /^subnets\/(.*)$/, list))
-		name = list[1]
-	else
-		return
+	name = params["name"];
+
+	if (name == "")
+	    return;
 
         cmd = "mktemp"
         cmd | getline tempfile
@@ -307,17 +307,14 @@ function N_(text,			list, cmd, line) {
 			print ")"
 			break
 		case "read":
-			if (!match(params["_objects"], /^subnets\/(.*)$/, a)) {
-				print "()"
-				break
-			}
-
 			print "("
-			read_subnet(DHCPD_CONF, a[1])
+			if ( params["_objects"] == "subnets" )
+				read_subnet(DHCPD_CONF, params["name"]);
 			print ")"
 			break
 		case "write":
-			write_subnet(DHCPD_CONF, params);
+			if ( params["_objects"] == "subnets" )
+				write_subnet(DHCPD_CONF, params);
 			system(SERVICE " dhcpd reload &> /dev/null")
 			print "()"
 			break
