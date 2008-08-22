@@ -1,8 +1,8 @@
 %define _altdata_dir %_datadir/alterator
 
 Name: alterator-dhcp
-Version: 0.1
-Release: alt9
+Version: 0.2
+Release: alt1
 Packager: Grigory Batalov <bga@altlinux.ru>
 
 Summary: alterator module for dhcp conf file editing
@@ -14,11 +14,11 @@ Source: %name-%version.tar
 
 BuildArch: noarch
 
-Requires: alterator >= 2.9 gettext dhcp-server
+Requires: alterator >= 3.9-alt8 gettext dhcp-server
 Requires: alterator-services
-Conflicts: alterator-fbi < 0.15-alt2
+Conflicts: alterator-fbi < 2.10-alt3
 
-BuildPreReq: alterator >= 3.1, alterator-fbi >= 0.7-alt1
+BuildPreReq: alterator >= 3.9-alt8, alterator-fbi >= 2.10-alt3
 
 # Automatically added by buildreq on Mon Jul 11 2005 (-bi)
 BuildRequires: alterator
@@ -30,20 +30,25 @@ DHCP configuration alterator module
 %setup -q
 
 %build
-%make_build libdir=%_libdir
+%make_build
 
 %install
-%makeinstall HTMLROOT=%buildroot%_var/www/
+%makeinstall
 %find_lang %name
 
 %files -f %name.lang
 %_altdata_dir/applications/*
-%_altdata_dir/ui/*/
+%_altdata_dir/design/*/
+%_altdata_dir/templates/*
 %_altdata_dir/help/*/*
-%_var/www/html/*
 %_alterator_backend3dir/*
 
 %changelog
+* Fri Aug 22 2008 Stanislav Ievlev <inger@altlinux.org> 0.2-alt1
+- remove template-*
+- move design to standard place
+- use module.mak
+
 * Tue Jun 17 2008 Grigory Batalov <bga@altlinux.ru> 0.1-alt9
 - Require alterator-services instead of alterator-chkconfig.
 
