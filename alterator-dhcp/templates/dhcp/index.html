@@ -6,75 +6,136 @@
   </head>
   <body>
     <a href="/services?name=dhcpd"><span translate="_">start, stop or restart service</span></a>
-    <h2><span translate="_">Subnets</span></h2>
-    <form method="POST" highlight-required="no" action="?action=delete">
-      <table class="server-list">
-	<thead>
-	  <tr>
-	    <th>&nbsp;</th>
-	    <th><label for="name">Subnet</label></th>
-	  </tr>
-	</thead>
-	<tbody optionlist="/subnets" class="alterator-list">
-	  <tr>
-	    <td><input type="checkbox" name="delete"/></td>
-	    <td nowrap="yes">
-		<a href="/dhcp/subnets?name=" class="alterator-ref2">
-		    <span class="alterator-label" name="name"></span>
-		</a>
-	    </td>
-	  </tr>
-	</tbody>
-      </table>
-      <input type="submit" value="Remove selected" class="btn"/>
-    </form>
-    <hr/>
-    <form method="POST" action="?action=new&amp;type=subnets">
-      <span translate="_">New subnet</span>
-      <input type="text" name="name" class="text" />
-      <input type="submit" value="Create" class="btn"/>
-    </form>
-    <form method="POST" action="?action=delete"  highlight-required="no">
-      <h2><span translate="_">Static hosts</span></h2>
-      <table class="server-list">
-	<thead>
-	  <tr>
-	    <th>&nbsp;</th>
-	    <th><label for="hostname">Hostname</label></th>
-	    <th><label for="ip">IP address</label></th>
-	    <th><label for="mac">MAC address</label></th>
-	  </tr>
-	</thead>
-	<tbody optionlist="/hosts" class="alterator-list">
-	  <tr>
-	    <td><input type="checkbox" name="delete"/></td>
-	    <td nowrap="yes"><span class="alterator-label" name="hostname"></span></td>
-	    <td nowrap="yes"><span class="alterator-label" name="ip"></span></td>
-	    <td nowrap="yes"><span class="alterator-label" name="mac"></span></td>
-	  </tr>
-	</tbody>
-      </table>
-      <input type="submit" value="Remove selected" class="btn"/>
-    </form>
-    <hr/>
-    <form method="POST" action="?action=new&amp;type=hosts">
-      <table>
-	<tbody>
-	  <tr>
-	    <td><label for="hostname">Hostname</label></td>
-	    <td><input type="text" class="text" name="hostname"/></td>
-	  </tr>
-	  <tr>
-	    <td><label for="ip">IP address</label></td>
-	    <td><input type="text" class="text" name="ip"/></td>
-	  </tr>
-	  <tr>
-	    <td><label for="mac">MAC address</label></td>
-	    <td><input type="text" class="text" name="mac"/></td>
-	  </tr>
-	</tbody>
-      </table>
-      <input type="submit" value="Add" class="btn"/>
+    <form method="POST">
+	<table class="form-table-annotated">
+	    <tr>
+		<td colspan="2">&nbsp;</td>
+	    </tr>
+	    <tr>
+		<td colspan="2" style="text-align:left"><strong><span translate="_">General settings</span></strong></td>
+	    </tr>
+	    <tr>
+		<td colspan="2">&nbsp;</td>
+	    </tr>
+	    <tr>
+		<td><span translate="_">Interface:</span></td>
+		<td>
+		    <select name="iface" enumref="/dhcp/avail_iface"/><br/>
+		    <small><span translate="_">(maximum possible address range)</span></small>
+		</td>
+	    </tr>
+	    <tr>
+		<td><span translate="_">Starting IP address:</span></td>
+		<td><input class="text" type="text" name="ip_start"/></td>
+	    </tr>
+	    <tr>
+		<td><span translate="_">Ending IP address:</span></td>
+		<td><input class="text" type="text" name="ip_end"/></td>
+	    </tr>
+	    <tr>
+		<td><span translate="_">Address  expiration time:</span></td>
+		<td><select name="client_time" enumref="/dhcp/avail_time"/></td>
+	    </tr>
+	    <tr>
+		<td colspan="2">&nbsp;</td>
+	    </tr>
+	    <tr>
+		<td colspan="2" style="text-align:left"><strong><span translate="_">Information provided for clients</span></strong></td>
+	    </tr>
+	    <tr>
+		<td colspan="2">&nbsp;</td>
+	    </tr>
+	    <tr>
+		<td><span translate="_">DNS server:</span></td>
+		<td><input type="text" class="text" name="client_dns"/></td>
+	    </tr>
+	    <tr>
+		<td><span translate="_">Search domain:</span></td>
+		<td><input type="text" class="text" name="client_search"/></td>
+	    </tr>
+	    <tr>
+		<td><span translate="_">Default gateway:</span></td>
+		<td><input type="text" class="text" name="client_gw"/></td>
+	    </tr>
+	    <tr>
+		<td colspan="2">&nbsp;</td>
+	    </tr>
+	    <tr>
+		<td>&nbsp;</td>
+		<td>
+		    <input type="submit" class="btn" name="general" value="Apply"/>
+		    &nbsp;
+		    <input type="reset" class="btn" value="Reset"/>
+		</td>
+	    </tr>
+	</table>
+	<hr/>
+	<strong><span translate="_">Static addresses</span></strong>
+	<br/><br/>
+
+	<div style="width:100%;max-height:300px; overflow: auto;">
+	    <table class="alterator-listbox" enumref="/dhcp/avail_static" style="width:100%">
+		<thead>
+			<tr>
+			    <th>&nbsp;</th>
+			    <th><span translate="_">Host address</span></th>
+			    <th><span translate="_">MAC address</span></th>
+			</tr>
+		    </thead>
+		    <tbody optionlist="/subnets" class="alterator-list">
+			<tr>
+			    <td><input type="checkbox" name="static_name"/></td>
+			    <td><span class="alterator-label" name="static_ip"/></td>
+			    <td><span class="alterator-label" name="static_mac"/></td>
+			</tr>
+		    </tbody>
+		</table>
+	</div>
+	<br/>
+	
+	<input type="submit" class="btn" name="static_del" value="Remove selected"/><br/>
+	<br/>
+	<table>
+	    <tr>
+		<td><span translate="_">Host address:</span></td>
+		<td><input type="text" class="text" name="new_static_ip"/></td>
+		<td><span translate="_">MAC address:</span></td>
+		<td><input type="text" class="text" name="new_static_mac"/></td>
+		<td><input type="submit" class="btn" name="static_add" value="Add"/></td>
+	    </tr>
+	    <tr>
+		<td>&nbsp;</td>
+		<td><small><span translate="_">(DNS name or IP address)</span></small></td>
+	    </tr>
+	</table>
+	<hr/>
+	<strong><span translate="_">Current dynamically allocated addresses</span></strong>
+	<br/><br/>
+
+	<div style="width:100%;max-height:300px; overflow: auto;">
+	    <table class="alterator-listbox" enumref="/dhcp/avail_lease" style="width:100%">
+		<thead>
+			<tr>
+			    <th>&nbsp;</th>
+			    <th><span translate="_">Host name</span></th>
+			    <th><span translate="_">MAC address</span></th>
+			    <th><span translate="_">IP address</span></th>
+			    <th><span translate="_">Expiration time</span></th>
+			</tr>
+		    </thead>
+		    <tbody optionlist="/subnets" class="alterator-list">
+			<tr>
+			    <td><input type="checkbox" name="lease_name"/></td>
+			    <td><span class="alterator-label" name="lease_hname"/></td>
+			    <td><span class="alterator-label" name="lease_mac"/></td>
+			    <td><span class="alterator-label" name="lease_ip"/></td>
+			    <td><span class="alterator-label" name="lease_expired"/></td>
+			</tr>
+		    </tbody>
+		</table>
+	</div>
+	<br/>
+	<input type="submit" class="btn" name="lease_fix" value="Fix address for selected hosts"/>
     </form>
   </body>
 </html>

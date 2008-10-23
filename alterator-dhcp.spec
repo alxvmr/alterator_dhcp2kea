@@ -1,7 +1,7 @@
 %define _altdata_dir %_datadir/alterator
 
 Name: alterator-dhcp
-Version: 0.2
+Version: 0.3
 Release: alt1
 Packager: Grigory Batalov <bga@altlinux.ru>
 
@@ -37,13 +37,16 @@ DHCP configuration alterator module
 %find_lang %name
 
 %files -f %name.lang
+%config(noreplace) %_sysconfdir/alterator/dhcp
 %_altdata_dir/applications/*
-%_altdata_dir/design/*/
 %_altdata_dir/templates/*
 %_altdata_dir/help/*/*
 %_alterator_backend3dir/*
 
 %changelog
+* Thu Oct 23 2008 Stanislav Ievlev <inger@altlinux.org> 0.3-alt1
+- redesign backend and ui
+
 * Fri Aug 22 2008 Stanislav Ievlev <inger@altlinux.org> 0.2-alt1
 - remove template-*
 - move design to standard place

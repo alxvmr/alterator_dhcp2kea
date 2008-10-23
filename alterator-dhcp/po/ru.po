@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alterator-dhcp 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-28 18:59+0400\n"
+"POT-Creation-Date: 2008-10-23 12:34+0400\n"
 "PO-Revision-Date: 2007-03-26 20:48+0400\n"
 "Last-Translator: Grigory Batalov <bga@altlinux.org>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -14,108 +14,162 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ui/dhcp/html-messages.scm:1
+#: стандартный ввод:1
 msgid "DHCP server"
 msgstr "DHCP-сервер"
 
-#: ui/dhcp/html-messages.scm:2 ui/dhcp/html-messages.scm:12
+#: стандартный ввод:1
 msgid "start, stop or restart service"
 msgstr "запустить, остановить или перезапустить службу"
 
-#: ui/dhcp/html-messages.scm:3
-msgid "Subnets"
-msgstr "Подсети"
+#: стандартный ввод:2
+msgid "General settings"
+msgstr "Общие настройки"
 
-#: ui/dhcp/html-messages.scm:4
-msgid "edit subnet"
-msgstr "настроить подсеть"
+#: стандартный ввод:3
+msgid "Interface:"
+msgstr "Интерфейс:"
 
-#: ui/dhcp/html-messages.scm:5 ui/dhcp/html-messages.scm:9
-msgid "Remove selected"
-msgstr "Удалить выделенные"
+#: стандартный ввод:4
+msgid "(maximum possible address range)"
+msgstr "(максимально допустимый диапазон адресов)"
 
-#: ui/dhcp/html-messages.scm:6
-msgid "New subnet"
-msgstr "Новая подсеть"
+#: стандартный ввод:5
+msgid "Starting IP address:"
+msgstr "Начальный IP адрес:"
 
-#: ui/dhcp/html-messages.scm:7
-msgid "Create"
-msgstr "Создать"
+#: стандартный ввод:6
+msgid "Ending IP address:"
+msgstr "Конечный IP адрес:"
 
-#: ui/dhcp/html-messages.scm:8
-msgid "Static hosts"
+#: стандартный ввод:7
+msgid "Address  expiration time:"
+msgstr "Срок действия адреса:"
+
+#: стандартный ввод:8
+msgid "Information provided for clients"
+msgstr "Информация, предоставляемая клиентам"
+
+#: стандартный ввод:9
+msgid "DNS server:"
+msgstr "DNS-сервер:"
+
+#: стандартный ввод:10
+msgid "Search domain:"
+msgstr "Домен поиска:"
+
+#: стандартный ввод:11
+msgid "Default gateway:"
+msgstr "Шлюз по умолчанию:"
+
+#: стандартный ввод:12
+msgid "Apply"
+msgstr "Применить"
+
+#: стандартный ввод:13
+msgid "Reset"
+msgstr "Вернуть"
+
+#: стандартный ввод:14
+msgid "Static addresses"
 msgstr "Статические адреса"
 
-#: ui/dhcp/html-messages.scm:10
-msgid "Add"
-msgstr "Добавить"
+#: стандартный ввод:15
+msgid "Host address"
+msgstr "Адрес компьютера"
 
-#: ui/dhcp/html-messages.scm:11
-msgid "DHCP subnet settings"
-msgstr "Настройка подсети DHCP"
-
-#: ui/dhcp/html-messages.scm:13
-msgid "Apply"
-msgstr "Принять"
-
-#: backend3/dhcp:275
-msgid "Subnet"
-msgstr "Подсеть"
-
-#: backend3/dhcp:276 backend3/dhcp:280
-msgid "Hostname"
-msgstr "Имя хоста"
-
-#: backend3/dhcp:277 backend3/dhcp:281
-msgid "IP address"
-msgstr "IP-адрес"
-
-#: backend3/dhcp:278 backend3/dhcp:282
+#: стандартный ввод:16 ввод:24
 msgid "MAC address"
 msgstr "MAC-адрес"
 
-#: backend3/dhcp:285
-msgid "Netmask"
-msgstr "Маска сети"
+#: стандартный ввод:17
+msgid "Remove selected"
+msgstr "Удалить выделенные"
 
-#: backend3/dhcp:286
-msgid "Domain"
-msgstr "Домен"
+#: стандартный ввод:18
+msgid "Host address:"
+msgstr "Адрес компьютера:"
 
-#: backend3/dhcp:287 backend3/dhcp:288 backend3/dhcp:289
-msgid "Range"
-msgstr "Диапазон"
+#: стандартный ввод:19
+msgid "MAC address:"
+msgstr "MAC-адрес:"
 
-#: backend3/dhcp:290
-msgid "Routers"
-msgstr "Шлюзы"
+#: стандартный ввод:20
+msgid "Add"
+msgstr "Добавить"
 
-#: backend3/dhcp:291
-msgid "DNS servers"
-msgstr "Сервера DNS"
+#: стандартный ввод:21
+msgid "(DNS name or IP address)"
+msgstr "(имя в DNS или IP адрес)"
 
-#: backend3/dhcp:292
-msgid "Lease time"
-msgstr "Срок выдачи"
+#: стандартный ввод:22
+msgid "Current dynamically allocated addresses"
+msgstr "Текущие динамически выделенные адреса"
 
-#: backend3/dhcp:293
-msgid "Max lease time"
-msgstr "Крайний срок выдачи"
+#: стандартный ввод:23
+msgid "Host name"
+msgstr "Имя компьютера"
 
-#: backend3/dhcp:332
-msgid "Such hostname is already specified"
-msgstr "Такое имя хоста уже указано"
+#: стандартный ввод:25
+msgid "IP address"
+msgstr "IP-адрес"
 
-#: backend3/dhcp:336
-msgid "Such MAC address is already used"
-msgstr "Такой MAC-адрес уже используется"
+#: стандартный ввод:26
+msgid "Expiration time"
+msgstr "Годен до"
 
-#: backend3/dhcp:350
-msgid "Such subnet is already specified"
-msgstr "Такая подсеть уже указана"
+#: стандартный ввод:27
+msgid "Fix address for selected hosts"
+msgstr "Зафиксировать адрес для выбранных компьютеров"
 
-#~ msgid "DHCP server administration"
-#~ msgstr "Управление сервером DHCP"
+#: backend3/dhcp:68
+msgid "You should define network interface"
+msgstr "Вы должны назначить интерфейс"
 
-#~ msgid "Network"
-#~ msgstr "Сеть"
+#: backend3/dhcp:71 backend3/dhcp:221
+msgid "You should define address range"
+msgstr "Вы должны назначит диапазон адресов"
+
+#: backend3/dhcp:174
+msgid "1 hour"
+msgstr "1 час"
+
+#: backend3/dhcp:175
+msgid "2 hours"
+msgstr "2 часа"
+
+#: backend3/dhcp:176
+msgid "4 hours"
+msgstr "4 часа"
+
+#: backend3/dhcp:177
+msgid "8 hours"
+msgstr "8 часов"
+
+#: backend3/dhcp:178
+msgid "12 hours"
+msgstr "12 часов"
+
+#: backend3/dhcp:179
+msgid "1 day"
+msgstr "1 день"
+
+#: backend3/dhcp:180
+msgid "1 week"
+msgstr "1 неделя"
+
+#: backend3/dhcp:181
+msgid "2 weeks"
+msgstr "2 недели"
+
+#: backend3/dhcp:182
+msgid "1 month"
+msgstr "1 месяц"
+
+#: backend3/dhcp:224
+msgid "Invalid address range"
+msgstr "Неверный диапазон адресов"
+
+#: backend3/dhcp:248
+msgid "Same entry already exists"
+msgstr "Подобная запись уже существует"

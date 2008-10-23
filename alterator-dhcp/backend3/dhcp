@@ -1,397 +1,260 @@
-#!/bin/awk -f
+#!/bin/sh
 
-BEGIN {
-	DHCPD_CONF = "/etc/dhcp/dhcpd.conf"
-	SERVICE = "/sbin/service"
-	# split input fields by a colon
-	FS=":"
-	# set default language
-	LANGUAGE="en_US.UTF8"
-	# set translation domain
-	TEXTDOMAIN = "alterator-dhcp"
-	readmsg=0
-	LOGFILE="/var/log/configd.log"
-}
+alterator_api_version=1
 
-# error reporting function
-function debug(text, errno) {
-	printf "%s " TEXTDOMAIN ": %s: %s\n", strftime("%B %d %H:%M:%S"), text, errno >> LOGFILE
-	fflush(LOGFILE)
-}
+. alterator-sh-functions
+. alterator-net-functions
 
-# remove leading and trailing spaces
-function trim(arg) {
-	gsub(/^[[:space:]]+/,"", arg)
-	gsub(/[[:space:]]+$/,"", arg)
-	return arg
-}
+. shell-config
+. shell-quote
 
-# search a regular expression in a file
-function grep(regex, file,		line) {
-	while ((error = getline line <file) > 0)
-		if (line ~ regex) {
-			close(file)
-			return 1
-		}
-	if (error == -1)
-		debug("Error reading file '" file "'", ERRNO)
-	close(file)
-	return 0
-}
+lease_conf="/var/lib/dhcp/dhcpd/state/dhcpd.leases"
+general_conf="/etc/alterator/dhcp/general"
+static_conf="/etc/alterator/dhcp/static"
+dhcpd_conf="/etc/dhcp/dhcpd.conf"
 
-# filter hostname/mac/ip list from a config file
-function list_hosts(config,		error, line, hostname, list, inside, ip, mac) {
-	while ((error = getline line <config) > 0) {
-		if (line ~ /^#/ || line ~ /^[[:space:]]*$/)
-			continue
-		if (match(line, /^[[:space:]]*host[[:space:]]+([a-zA-Z0-9.-]+)[[:space:]]+{/, list)) {
-			hostname = list[1]
-			inside = 1
-		}
-		if (inside && match(line, /fixed-address[[:space:]]+([0-9.]+);/, list))
-			ip = list[1]
-		if (inside && match(line, /hardware[[:space:]]+ethernet[[:space:]]+([a-zA-Z0-9:]+);/, list))
-			mac = list[1]
-		if (inside && line ~ /}/) {
-			inside = 0
-			printf ("(\"%s\" hostname \"%s\" mac \"%s\" ip \"%s\")",
-				hostname, hostname, mac, ip)
-		}
-	}
-	if (error == -1)
-		debug("Error reading file '" config "'", ERRNO)
-	close(config)
-}
-
-# delete host record from a config file
-function delete_host(config, host,	cmd, tempfile, error, line, regex, inside) {
-        cmd = "mktemp"
-        cmd | getline tempfile
-        close(cmd)
-
-	regex = "^[[:space:]]*host[[:space:]]+" host "[[:space:]]+{"
-	while ((error = getline line <config) > 0) {
-		if (line ~ regex)
-			inside = 1
-		if (!inside)
-			print line >> tempfile
-		if (line ~ /}/)
-			inside = 0
-	}
-	if (error == -1)
-		debug("Error reading file '" config "'", ERRNO)
-	close(config)
-	close(tempfile)
-	system("cat " tempfile " > " config)
-        system("rm -f " tempfile)
-}
-
-# filter subnet name list from a config file
-function list_subnets(config,		error, line, list) {
-	while ((error = getline line <config) > 0)
-		if (match(line, /^[[:space:]]*subnet[[:space:]]+.*#[[:space:]]*([^[:space:]]+)/, list))
-			printf ("(\"%s\")", list[1])
-	if (error == -1)
-		debug("Error reading file '" config "'", ERRNO)
-	close(config)
-}
-
-# read subnet settings from a config file
-function read_subnet(config, name,	regex, error, line, list, subnet, netmask, inside, rangefrom, rangeto, domain, routers, dns, lease, maxlease) {
-	regex = "^[[:space:]]*subnet[[:space:]]+([0-9.]+)[[:space:]]+netmask[[:space:]]+([0-9.]+).*#[[:space:]]*" name
-	lease = maxlease = -1
-	while ((error = getline line <config) > 0) {
-
-		if (line ~ /^#/ || line ~ /^[[:space:]]*$/)
-			continue
-		if (match(line, regex, list)) {
-			subnet = list[1]
-			netmask = list[2]
-			inside = 1
-		}
-		if (!inside)
-			continue
-		if (match(line, "^[[:space:]]*range[[:space:]]+dynamic-bootp[[:space:]]+([0-9.]+)[[:space:]]+([0-9.]+);", list)) {
-			rangefrom = list[1]
-			rangeto = list[2]
-		}
-		if (match(line, "^[[:space:]]*option[[:space:]]+domain-name[[:space:]]+\"([a-zA-Z0-9.-]+)\";", list))
-			domain = list[1]
-		if (match(line, "^[[:space:]]*option[[:space:]]+routers[[:space:]]+(.+);", list))
-			routers = list[1]
-		if (match(line, "^[[:space:]]*option[[:space:]]+domain-name-servers[[:space:]]+(.+);", list))
-			dns = list[1]
-		if (match(line, "^[[:space:]]*default-lease-time[[:space:]]+([0-9]+);", list))
-			lease = list[1]
-		if (match(line, "^[[:space:]]*max-lease-time[[:space:]]+([0-9]+);", list))
-			maxlease = list[1]
-		if (line ~ /}/) {
-			inside = 0
-			printf ("(\"%s\" netmask \"%s\" rangefrom \"%s\" rangeto \"%s\" domain \"%s\" routers \"%s\" dns \"%s\"",
-				   name, netmask, rangefrom, rangeto, domain, routers, dns)
-			if (lease >= 0)
-				printf (" lease \"%d\"", lease)
-			if (maxlease >= 0)
-				printf (" maxlease \"%d\"", maxlease)
-			print ")"
-		}
-	}
-	if (error == -1)
-		debug("Error reading file '" config "'", ERRNO)
-	close(config)
-}
-
-# write subnet options to the config file
-function write_subnet(config, params,		list, name, cmd, tempfile, regex, error, line, inside) {
-	name = params["name"];
-
-	if (name == "")
-	    return;
-
-        cmd = "mktemp"
-        cmd | getline tempfile
-        close(cmd)
-
-	regex = "^[[:space:]]*subnet[[:space:]]+([0-9.]+)[[:space:]]+netmask[[:space:]]+([0-9.]+).*#[[:space:]]*" name
-	while ((error = getline line <config) > 0) {
-		delete list
-		if (match(line, regex, list))
-			inside = 1
-		if (!inside) {
-			print line >> tempfile
-			continue
-		}
-
-		if (inside && line ~ /}/) {
-			inside = 0
-
-			printf ("subnet %s netmask %s { # %s\n",
-				ipcalc(params["rangefrom"], params["rangeto"], params["netmask"]),
-				params["netmask"], name) >> tempfile
-			printf ("\toption subnet-mask %s;\n", params["netmask"]) >> tempfile
-			printf ("\trange dynamic-bootp %s %s;\n",
-				params["rangefrom"], params["rangeto"]) >> tempfile
-			if (params["domain"])
-					printf ("\toption domain-name \"%s\";\n",
-							params["domain"]) >> tempfile
-			if (params["routers"])
-					printf ("\toption routers %s;\n",
-							params["routers"]) >> tempfile
-			if (params["dns"])
-					printf ("\toption domain-name-servers %s;\n",
-							params["dns"]) >> tempfile
-			printf ("\tdefault-lease-time %d;\n",
-				params["lease"]) >> tempfile
-			printf ("\tmax-lease-time %d;\n",
-				params["maxlease"]) >> tempfile
-			print "}" >> tempfile 
-		}
-	}
-	if (error == -1)
-		debug("Error reading file '" config "'", ERRNO)
-	close(config)
-	close(tempfile)
-	system("cat " tempfile " > " config)
-        system("rm -f " tempfile)
-}
-
-# delete subnet from a config file
-function delete_subnet(config, name,	cmd, tempfile, regex, error, line, inside) {
-        cmd = "mktemp"
-        cmd | getline tempfile
-        close(cmd)
-
-	regex = "^[[:space:]]*subnet[[:space:]]+([0-9.]+)?[[:space:]]+netmask[[:space:]]+([0-9.]+).*#[[:space:]]*" name
-	while ((error = getline line <config) > 0) {
-		if (line ~ regex)
-			inside = 1
-		if (!inside)
-			print line >> tempfile
-		if (line ~ /}/)
-			inside = 0
-	}
-	if (error == -1)
-		debug("Error reading file '" config "'", ERRNO)
-	close(config)
-	close(tempfile)
-	system("cat " tempfile " > " config)
-        system("rm -f " tempfile)
-}
-
-# calculate subnet address from range start, range end and mask
-function ipcalc (ip1, ip2, mask,	list1, list2, list3, i, result) {
-	if (!mask)
-			mask = "255.255.255.255"
-
-	if (split(ip1, list1, /\./) < 4) {
-		debug("wrong ip", ip1)
-		return
-	}
-	if (split(ip2, list2, /\./) < 4) {
-		debug("wrong ip", ip2)
-		return
-	}
-	if (split(mask, list3, /\./) < 4) {
-		debug("wrong mask", mask)
-		return
-	}
-	for (i = 1; i <= 4; i++) {
-		if (i > 1)
-			result = result "."
-		result = result and(or(list1[i], list2[i]), list3[i])
-	}
-	return result
-}
-
-# show translation
-# overwriting locale settings
-function N_(text,			list, cmd, line) {
-	split(LANGUAGE, list, /:/)
-	cmd = "LANGUAGE=\"" LANGUAGE "\" LANG=\"" list[1] ".UTF8\" gettext " TEXTDOMAIN " \"" text "\""
-	cmd | getline line
-	close(cmd)
-	return line
-}
-
-# start message reading
-/^_message:begin$/ {
-	readmsg=1
-	next
-}
-
-# stop message reading
-/^_message:end$/ {
-	readmsg=0
-	#debug("==========", "==========")
-	#for (attribute in params)
-	#	debug("params[" attribute "]", params[attribute])
-	# overwrite current language
-	if (params["language"] != "")
-		LANGUAGE = gensub(/;/, ":", "g", params["language"])
-
-	switch (params["action"]) {
-		case "constraints":
-			print "("
-			printf " name (label \"%s\")", N_("Subnet")
-			printf " hostname (label \"%s\")", N_("Hostname")
-			printf " ip (label \"%s\")", N_("IP address")
-			printf " mac (label \"%s\")", N_("MAC address")
-			if (params["type"] == "hosts") {
-				printf " hostname (label \"%s\" required #t)", N_("Hostname")
-				printf " ip (label \"%s\" required #t ipv4-address #t)", N_("IP address")
-				printf " mac (label \"%s\" required #t match \"^([[:alnum:]]{1,2}:){5}[[:alnum:]]{1,2}$\")", N_("MAC address")
-			}
-			if (params["_objects"] ~ /^subnets\y/) {
-				printf " netmask (label \"%s\" required #t ipv4-address #t)", N_("Netmask")
-				printf " domain (hostname #t label \"%s\")", N_("Domain")
-				printf " rangefrom (label \"%s\" required #t ipv4-address #t)", N_("Range")
-				printf " rangeto (label \"%s\" required #t ipv4-address #t)", N_("Range")
-				printf " range (label \"%s\")", N_("Range")
-				printf " routers (label \"%s\" ipv4-address #t)", N_("Routers")
-				printf " dns (label \"%s\" ipv4-address #t)", N_("DNS servers")
-				printf " lease (default \"21600\" label \"%s\")", N_("Lease time")
-				printf " maxlease (default \"43200\" label \"%s\")", N_("Max lease time")
-			}
-			print ")"
-			break
-		case "list":
-			print "("
-			switch (params["_objects"]) {
-				case /^hosts\y/:
-					list_hosts(DHCPD_CONF)
-					break
-				case /^subnets\y/:
-					list_subnets(DHCPD_CONF)
-					break
-			}
-			print ")"
-			break
-		case "read":
-			print "("
-			if ( params["_objects"] == "subnets" )
-				read_subnet(DHCPD_CONF, params["name"]);
-			print ")"
-			break
-		case "write":
-			if ( params["_objects"] == "subnets" )
-				write_subnet(DHCPD_CONF, params);
-			system(SERVICE " dhcpd reload &> /dev/null")
-			print "()"
-			break
-		case "new":
-			if (!grep("\\yddns-update-style\\y", DHCPD_CONF)) {
-				print "ddns-update-style none;" >> DHCPD_CONF
-				close(DHCPD_CONF)
-			}
-			switch (params["type"]) {
-				case "hosts":
-					if (grep("^[[:space:]]*host[[:space:]]+" params["hostname"] "[[:space:]]*{$", DHCPD_CONF)) {
-						printf "(error \"%s\")", N_("Such hostname is already specified")
-						break
-					}
-					if (grep("^\thardware ethernet " params["mac"] ";$", DHCPD_CONF)) {
-						printf "(error \"%s\")", N_("Such MAC address is already used")
-						break
-					}
-
-					print "host " params["hostname"] " {" >> DHCPD_CONF
-					print "\thardware ethernet " params["mac"] ";" >> DHCPD_CONF
-					print "\tfixed-address " params["ip"] ";" >> DHCPD_CONF
-					print "}" >> DHCPD_CONF
-					close(DHCPD_CONF)
-					system(SERVICE " dhcpd reload &> /dev/null")
-					print "()"
-					break
-				case "subnets":
-					if (grep("^[[:space:]]*subnet[[:space:]]+.*#[[:space:]]*" params["name"], DHCPD_CONF)) {
-						printf "(error \"%s\")", N_("Such subnet is already specified")
-						break
-					}
-					print "subnet 192.168.0.0 netmask 255.255.255.0 { # " params["name"] >> DHCPD_CONF
-					print "}" >> DHCPD_CONF
-					close(DHCPD_CONF)
-					system(SERVICE " dhcpd reload &> /dev/null")
-					print "()"
-					break
-				default:
-					print "()"
-			}
-			break
-		case "delete":
-			switch (params["_objects"]) {
-				case /^hosts\y/:
-					match(params["_objects"], /^hosts\/(.*)$/, a)
-					delete_host(DHCPD_CONF, a[1])
-					system(SERVICE " dhcpd reload &> /dev/null")
-					break
-				case /^subnets\y/:
-					match(params["_objects"], /^subnets\/(.*)$/, a)
-					delete_subnet(DHCPD_CONF, a[1])
-					system(SERVICE " dhcpd reload &> /dev/null")
-					break
-				default:
-			}
-			print "()"
-			break
-		default:
-			print "#f"
-	}
-	fflush()
-	# delete attribute/value pairs before next cycle
-	delete params
-	#exit
-	next
-}
-
-# save attribute/value pairs
+static_list()
 {
-	if (! readmsg)
-		next
-	attribute=$1
-	value=$2
-	# join the rest of fields with a colon
-	for (n = 3; n <= NF; n++)
-		value=value ":" $n
-	value = gensub(/([^\\])\\n/, "\\1\n", "g", value)
-	params[attribute]=value
+    cat "$static_conf"
 }
+
+static_del()
+{
+    sed "/^$(quote_sed_regexp "$1")[[:space:]]/ d" -i "$static_conf"
+}
+
+static_has()
+{
+    grep -qs "^$(quote_sed_regexp "$1")[[:space:]]" "$static_conf"
+}
+
+static_add()
+{
+    printf '%s	%s\n' "$1" "$2" >>"$static_conf"
+}
+
+lease_list()
+{
+    /bin/awk \
+	'BEGIN { OFS = "_"}
+
+	match($0,/^[[:space:]]*lease[[:space:]]+([^[:space:]]+)[[:space:]]+\{[[:space:]]*$/,re) { r["ip"]=re[1]; }
+	match($0,/^[[:space:]]*hardware ethernet[[:space:]]+([^[:space:]]+)[[:space:]]*;[[:space:]]*$/,re) { r["hw"] = re[1]; }
+	match($0,/^[[:space:]]*ends[[:space:]]+[^[:space:]]+[[:space:]]+([^;]+);[[:space:]]*$/,re) { r["expired"]=re[1]; }
+	match($0,/^[[:space:]]*client-hostname[[:space:]]+"([^;"]+)"[[:space:]]*;[[:space:]]*$/,re) { r["hostname"]=re[1]; }
+
+	/^[[:space:]]*}[[:space:]]*$/	{ print r["ip"],r["hw"],r["expired"],r["hostname"]; for (i in r) delete r[i]; } ' \
+	"$lease_conf"
+}
+
+
+write_date()
+{
+    local langlist="$(write_language "$in_language")"
+    local firstlang="${langlist%%:*}"
+
+    LC_TIME="$firstlang" date -d "$1 GMT"
+}
+
+
+check_dhcpd_conf()
+{
+    local iface="$(shell_config_get "$general_conf" iface)"
+    local ip_start="$(shell_config_get "$general_conf" ip_start)"
+    local ip_end="$(shell_config_get "$general_conf" ip_end)"
+
+    if [ -z "$in_iface" ]; then
+	write_error "`_ "You should define network interface"`"
+	return 1
+    elif [ -z "$in_ip_start" -o -z "$in_ip_end" ]; then
+	write_error "`_ "You should define address range"`"
+	return 1
+    else
+	return 0
+    fi
+}
+
+
+
+generate_dhcpd_conf()
+{
+    local iface="$(shell_config_get "$general_conf" iface)"
+    local ip_start="$(shell_config_get "$general_conf" ip_start)"
+    local ip_end="$(shell_config_get "$general_conf" ip_end)"
+
+    printf '#auto generated by alterator-dhcp\n\n'
+    printf 'ddns-update-style none;\n'
+    printf 'authoritative;\n\n'
+
+    while IFS="	" read mac ip; do
+	printf 'host %s { hardware ethernet %s; fixed-address %s; }\n' "$ip" "$mac" "$ip"
+    done <"$static_conf"
+
+    printf '\n'
+
+    local ip="$(read_iface_addr "/etc/net/ifaces/$iface")"
+
+    local net="$(netname "$ip"|cut -f1)"
+    local net_ip="${net%%/*}"
+    local net_mask="$(maskname "${ip##*/}")"
+
+    printf 'subnet %s netmask %s {\n' "$net_ip" "$net_mask"
+
+	local client_gw="$(shell_config_get "$general_conf" client_gw)"
+	local client_dns="$(shell_config_get "$general_conf" client_dns)"
+	local client_search="$(shell_config_get "$general_conf" client_search)"
+	local client_time="$(shell_config_get "$general_conf" client_time)"
+
+	[ -z "$client_gw" ] || printf '\toption routers %s;\n' "$client_gw"
+	[ -z "$client_dns" ] || printf '\toption domain-name-servers %s;\n' "$client_dns"
+	[ -z "$client_search" ] || printf '\toption domain-name "%s";\n' "$client_search"
+	[ -z "$client_time" ] || printf '\tdefault-lease-time %s;\n\tmax-lease-time %s;\n' "$client_time" "$client_time"
+
+	printf '\trange %s %s;\n' "$ip_start" "$ip_end"
+
+    printf '}\n'
+}
+
+
+do_static_del()
+{
+    local IFS=";"
+    for i in $in_static_name; do static_del "$i" ; done
+}
+
+do_lease_fix()
+{
+    local IFS=";"
+    for i in $in_lease_name; do
+	local mac="${i##*_}"
+	local ip="${i%%_*}"
+
+	static_has "$mac" || static_add "$mac" "$ip"
+    done
+}
+
+on_message()
+{
+	case "$in_action" in
+		list)
+		    case "$in__objects" in
+			avail_lease)
+			    lease_list|
+				while IFS='_' read -r ip mac expired hname; do
+				    static_has "$mac" ||
+					write_table_item \
+					    lease_name "${ip}_${mac}" \
+					    lease_ip "$ip" \
+					    lease_mac "$mac" \
+					    lease_hname "$hname" \
+					    lease_expired "$(write_date "$expired")"
+				done
+			    ;;
+			avail_static)
+			    static_list|
+			    while read mac ip; do
+				write_table_item \
+				    static_name "$mac" \
+				    static_mac "$mac" \
+				    static_ip "$ip"
+			    done
+			    ;;
+			avail_iface)
+			    list_static_iface|
+				while read name; do
+				    local ip="$(read_iface_addr "/etc/net/ifaces/$name")"
+				    printf "%s	%s\n" $name "$(netname "$ip")"
+				done |
+				while read name network_name ip_start ip_end; do
+				    write_enum_item "$name" "$name ($ip_start - $ip_end)"
+				done
+			    ;;
+			avail_time)
+			    write_enum_item	3600		"`_ "1 hour"`"
+			    write_enum_item	7200		"`_ "2 hours"`"
+			    write_enum_item	14400		"`_ "4 hours"`"
+			    write_enum_item	28800		"`_ "8 hours"`"
+			    write_enum_item	43200		"`_ "12 hours"`"
+			    write_enum_item	86400		"`_ "1 day"`"
+			    write_enum_item	604800		"`_ "1 week"`"
+			    write_enum_item	1209600		"`_ "2 weeks"`"
+			    write_enum_item	18748800	"`_ "1 month"`"
+			    ;;
+		    esac
+		    ;;
+		read)
+			local iface="$(shell_config_get "$general_conf" iface)"
+			[ -n "$iface" ] || iiface="$(list_static_iface|head -n1)"
+			
+			local ip="$(read_iface_addr "/etc/net/ifaces/$iface")"
+			netname "$ip"|
+			    (
+				read network_name network_begin network_end
+				
+				ip_start="$(shell_config_get "$general_conf" ip_start)"
+				ip_end="$(shell_config_get "$general_conf" ip_end)"
+
+				if ! netcheck "$network_name" "$ip_start" "$ip_end"; then
+				    ip_start=
+				    ip_end=
+				fi
+
+				write_string_param network "$network_name ($network_begin - $network_end)"
+				write_string_param ip_start "$ip_start"
+				write_string_param ip_end "$ip_end"
+			    )
+			write_string_param iface "$iface"
+			write_string_param client_time "$(shell_config_get "$general_conf" client_time)"
+			write_string_param client_dns "$(shell_config_get "$general_conf" client_dns)"
+			write_string_param client_gw "$(shell_config_get "$general_conf" client_gw)"
+			write_string_param client_search "$(shell_config_get "$general_conf" client_search)"
+			;;
+		write)
+		    if [ -n "$in_general" -a -n "$in_iface" ];then
+			local ip="$(read_iface_addr "/etc/net/ifaces/$in_iface")"
+			netname "$ip"|
+			    (
+				read network_name network_begin network_end
+
+				if [ -z "$in_ip_start" -o -z "$in_ip_end" ];then
+				    write_error "`_ "You should define address range"`"
+				    return 1
+				elif ! netcheck "$network_name" "$in_ip_start" "$in_ip_end"; then
+				    write_error "`_ "Invalid address range"`"
+				    return 1
+				else
+				    shell_config_set "$general_conf" ip_start "$in_ip_start"
+				    shell_config_set "$general_conf" ip_end "$in_ip_end"
+				    return 0
+				fi
+			    ) || return
+
+
+			shell_config_set "$general_conf" iface "$in_iface"
+			shell_config_set "$general_conf" client_time "$in_client_time"
+			shell_config_set "$general_conf" client_dns "$in_client_dns"
+			shell_config_set "$general_conf" client_gw "$in_client_gw"
+			shell_config_set "$general_conf" client_search "$in_client_search"
+
+
+			shell_config_set "$general_conf" client_gw "$in_client_gw"
+		    elif ! check_dhcpd_conf; then #check general conf before any other actions
+			return
+		    elif [ -n "$in_static_del" -a -n "$in_static_name" ];then
+			do_static_del
+		    elif [ -n "$in_static_add" -a -n "$in_new_static_ip" -a -n "$in_new_static_mac" ]; then
+			if static_has "$in_new_static_mac"; then
+			    write_error "`_ "Same entry already exists"`"
+			    return
+			else
+			    static_add "$in_new_static_mac" "$in_new_static_ip"
+			fi
+		    elif [ -n "$in_lease_fix" -a -n "$in_lease_name" ]; then
+			do_lease_fix
+		    fi
+		    generate_dhcpd_conf >"$dhcpd_conf"
+		    ;;
+	esac
+}
+
+message_loop
