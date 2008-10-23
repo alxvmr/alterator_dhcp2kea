@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-23 12:34+0400\n"
+"POT-Creation-Date: 2008-10-23 14:54+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -121,57 +121,61 @@ msgid "Expiration time"
 msgstr ""
 
 #: стандартный ввод:27
-msgid "Fix address for selected clients"
+msgid "Fix address for selected hosts"
 msgstr ""
 
-#: backend3/dhcp:68
+#: interfaces/guile/type/dhcp-mac-address.scm:12
+msgid "invalid MAC address"
+msgstr ""
+
+#: backend3/dhcp:67
 msgid "You should define network interface"
 msgstr ""
 
-#: backend3/dhcp:71 backend3/dhcp:221
+#: backend3/dhcp:70 backend3/dhcp:229
 msgid "You should define address range"
 msgstr ""
 
-#: backend3/dhcp:174
+#: backend3/dhcp:182
 msgid "1 hour"
 msgstr ""
 
-#: backend3/dhcp:175
+#: backend3/dhcp:183
 msgid "2 hours"
 msgstr ""
 
-#: backend3/dhcp:176
+#: backend3/dhcp:184
 msgid "4 hours"
 msgstr ""
 
-#: backend3/dhcp:177
+#: backend3/dhcp:185
 msgid "8 hours"
 msgstr ""
 
-#: backend3/dhcp:178
+#: backend3/dhcp:186
 msgid "12 hours"
 msgstr ""
 
-#: backend3/dhcp:179
+#: backend3/dhcp:187
 msgid "1 day"
 msgstr ""
 
-#: backend3/dhcp:180
+#: backend3/dhcp:188
 msgid "1 week"
 msgstr ""
 
-#: backend3/dhcp:181
+#: backend3/dhcp:189
 msgid "2 weeks"
 msgstr ""
 
-#: backend3/dhcp:182
+#: backend3/dhcp:190
 msgid "1 month"
 msgstr ""
 
-#: backend3/dhcp:224
+#: backend3/dhcp:232
 msgid "Invalid address range"
 msgstr ""
 
-#: backend3/dhcp:248
+#: backend3/dhcp:256
 msgid "Same entry already exists"
 msgstr ""

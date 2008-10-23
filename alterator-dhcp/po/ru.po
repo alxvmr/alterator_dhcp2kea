@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alterator-dhcp 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-23 12:34+0400\n"
+"POT-Creation-Date: 2008-10-23 14:54+0400\n"
 "PO-Revision-Date: 2007-03-26 20:48+0400\n"
 "Last-Translator: Grigory Batalov <bga@altlinux.org>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -122,54 +122,58 @@ msgstr "Годен до"
 msgid "Fix address for selected hosts"
 msgstr "Зафиксировать адрес для выбранных компьютеров"
 
-#: backend3/dhcp:68
+#: interfaces/guile/type/dhcp-mac-address.scm:12
+msgid "invalid MAC address"
+msgstr "недопустимый MAC-адрес"
+
+#: backend3/dhcp:67
 msgid "You should define network interface"
 msgstr "Вы должны назначить интерфейс"
 
-#: backend3/dhcp:71 backend3/dhcp:221
+#: backend3/dhcp:70 backend3/dhcp:229
 msgid "You should define address range"
 msgstr "Вы должны назначит диапазон адресов"
 
-#: backend3/dhcp:174
+#: backend3/dhcp:182
 msgid "1 hour"
 msgstr "1 час"
 
-#: backend3/dhcp:175
+#: backend3/dhcp:183
 msgid "2 hours"
 msgstr "2 часа"
 
-#: backend3/dhcp:176
+#: backend3/dhcp:184
 msgid "4 hours"
 msgstr "4 часа"
 
-#: backend3/dhcp:177
+#: backend3/dhcp:185
 msgid "8 hours"
 msgstr "8 часов"
 
-#: backend3/dhcp:178
+#: backend3/dhcp:186
 msgid "12 hours"
 msgstr "12 часов"
 
-#: backend3/dhcp:179
+#: backend3/dhcp:187
 msgid "1 day"
 msgstr "1 день"
 
-#: backend3/dhcp:180
+#: backend3/dhcp:188
 msgid "1 week"
 msgstr "1 неделя"
 
-#: backend3/dhcp:181
+#: backend3/dhcp:189
 msgid "2 weeks"
 msgstr "2 недели"
 
-#: backend3/dhcp:182
+#: backend3/dhcp:190
 msgid "1 month"
 msgstr "1 месяц"
 
-#: backend3/dhcp:224
+#: backend3/dhcp:232
 msgid "Invalid address range"
 msgstr "Неверный диапазон адресов"
 
-#: backend3/dhcp:248
+#: backend3/dhcp:256
 msgid "Same entry already exists"
 msgstr "Подобная запись уже существует"
