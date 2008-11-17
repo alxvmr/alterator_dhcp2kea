@@ -3,10 +3,21 @@
 <html wf="form">
   <head>
     <link type="text/css" rel="stylesheet" href="/design/styles/dhcp.css"/>
+    <script>
+      effectShow("noiface_warn", "iface", "");
+      effectHide("main_table", "iface", "");
+    </script>
   </head>
   <body>
-    <a href="/services?name=dhcpd"><span translate="_">start, stop or restart service</span></a>
+    <a href="/services?name=dhcpd"><span translate="_">Start, stop or restart service...</span></a>
     <form method="POST">
+
+      <div name="noiface_warn">
+        <p><span translate="_">You must have statically configured ethernet interface to setup dhcp server.</span><br/>
+        <a href="/net-eth"><span translate="_">Reconfigure ethernet interfaces...</span></a></p>
+      </div>
+
+      <div name="main_table">
 	<table class="form-table-annotated">
 	    <tr>
 		<td colspan="2">&nbsp;</td>
@@ -136,6 +147,7 @@
 	</div>
 	<br/>
 	<input type="submit" class="btn" name="lease_fix" value="Fix address for selected hosts"/>
+      </div>
     </form>
   </body>
 </html>
