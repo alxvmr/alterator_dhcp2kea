@@ -2,7 +2,7 @@
 
 Name: alterator-dhcp
 Version: 0.3
-Release: alt3
+Release: alt4
 Packager: Grigory Batalov <bga@altlinux.ru>
 
 Summary: alterator module for dhcp conf file editing
@@ -46,6 +46,9 @@ DHCP configuration alterator module
 %_alterator_backend3dir/*
 
 %changelog
+* Fri Dec 05 2008 Vladislav Zavjalov <slazav@altlinux.org> 0.3-alt4
+- rebuild with new l10n
+
 * Mon Nov 17 2008 Vladislav Zavjalov <slazav@altlinux.org> 0.3-alt3
 - remove old css include
 - show warning if no statically configured interfaces found
