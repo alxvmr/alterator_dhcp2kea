@@ -2,7 +2,7 @@
 
 Name: alterator-dhcp
 Version: 0.3
-Release: alt5
+Release: alt6
 Packager: Grigory Batalov <bga@altlinux.ru>
 
 Summary: alterator module for dhcp conf file editing
@@ -19,7 +19,7 @@ Requires: dhcp-server
 Requires: alterator-services
 Conflicts: alterator-fbi < 5.1-alt5
 
-BuildPreReq: alterator >= 4.0-alt18, alterator-fbi >= 5.1-alt5, alterator-l10n >= 0.9-alt18
+BuildPreReq: alterator >= 4.0-alt18
 
 # Automatically added by buildreq on Mon Jul 11 2005 (-bi)
 BuildRequires: alterator
@@ -35,17 +35,18 @@ DHCP configuration alterator module
 
 %install
 %makeinstall
-%find_lang %name
 
-%files -f %name.lang
+%files
 %config(noreplace) %_sysconfdir/alterator/dhcp
 %_altdata_dir/applications/*
 %_altdata_dir/interfaces/*/*/*
 %_altdata_dir/templates/*
-%_altdata_dir/help/*/*
 %_alterator_backend3dir/*
 
 %changelog
+* Tue Jan 27 2009 Vladislav Zavjalov <slazav@altlinux.org> 0.3-alt6
+- move help and translations to alterator-l10n
+
 * Tue Dec 09 2008 Vladislav Zavjalov <slazav@altlinux.org> 0.3-alt5
 - rebuild with new l10n (fixed help)
 

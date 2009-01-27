@@ -8,3 +8,6 @@ Name=DHCP server
 X-Alterator-URI=/dhcp
 X-Alterator-UI=html
 X-Alterator-Help=dhcp
+Name[ru]=DHCP-сервер
+Name[uk]=DHCP-сервер
+Name[pt_BR]=Servidor DHCP
