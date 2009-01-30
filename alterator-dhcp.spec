@@ -37,6 +37,7 @@ DHCP configuration alterator module
 %makeinstall
 
 %files
+%_bindir/*
 %config(noreplace) %_sysconfdir/alterator/dhcp
 %_altdata_dir/applications/*
 %_altdata_dir/interfaces/*/*/*
