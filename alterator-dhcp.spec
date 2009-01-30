@@ -1,8 +1,8 @@
 %define _altdata_dir %_datadir/alterator
 
 Name: alterator-dhcp
-Version: 0.3
-Release: alt6
+Version: 0.4
+Release: alt1
 Packager: Grigory Batalov <bga@altlinux.ru>
 
 Summary: alterator module for dhcp conf file editing
@@ -45,6 +45,9 @@ DHCP configuration alterator module
 %_alterator_backend3dir/*
 
 %changelog
+* Fri Jan 30 2009 Stanislav Ievlev <inger@altlinux.org> 0.4-alt1
+- add support for "ntp-servers"
+
 * Tue Jan 27 2009 Vladislav Zavjalov <slazav@altlinux.org> 0.3-alt6
 - move help and translations to alterator-l10n
 
