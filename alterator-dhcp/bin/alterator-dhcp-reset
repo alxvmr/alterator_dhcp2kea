@@ -63,6 +63,14 @@ generate()
     local client_time="$(shell_config_get "$general_conf" client_time)"
     local client_ntp="$(shell_config_get "$general_conf" client_ntp)"
 
+    local client_pxe_root="$(shell_config_get "$general_conf" client_pxe_root)"
+    local client_pxe_server="$(shell_config_get "$general_conf" client_pxe_server)"
+    local client_pxe_filename="$(shell_config_get "$general_conf" client_pxe_filename)"
+
+    [ -z "$client_pxe_server" ] || printf '\tnext-server %s;\n' "$(ntp_addr "$client_pxe_server" "$ip")"
+    [ -z "$client_pxe_filename" ] || printf '\tfilename "%s";\n' "$(ntp_addr "$client_pxe_filename" "$ip")"
+    [ -z "$client_pxe_root" ] || printf '\toption root-path "%s";\n' "$client_pxe_root"
+
     [ -z "$client_ntp" ] || printf '\toption ntp-servers %s;\n' "$(ntp_addr "$client_ntp" "$ip")"
     [ -z "$client_gw" ] || printf '\toption routers %s;\n' "$client_gw"
     [ -z "$client_dns" ] || printf '\toption domain-name-servers %s;\n' "$client_dns"
