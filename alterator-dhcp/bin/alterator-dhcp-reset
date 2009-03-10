@@ -52,9 +52,10 @@ generate()
     printf 'authoritative;\n\n'
 
     local static_map= static_ip=
-    while IFS="	" read static_mac static_ip; do
-	printf 'host %s { hardware ethernet %s; fixed-address %s; }\n' "$static_ip" "$static_mac" "$static_ip"
-    done <"$static_conf"
+    [ ! -s "$static_conf" ] ||
+	while IFS="	" read static_mac static_ip; do
+	    printf 'host %s { hardware ethernet %s; fixed-address %s; }\n' "$static_ip" "$static_mac" "$static_ip"
+	done <"$static_conf"
 
     printf '\n'
 
