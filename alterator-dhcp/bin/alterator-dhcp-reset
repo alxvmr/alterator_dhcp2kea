@@ -53,7 +53,7 @@ generate()
 
     local static_map= static_ip=
     [ ! -s "$static_conf" ] ||
-	while IFS="	" read static_mac static_ip; do
+	while IFS="	" read static_mac static_ip static_hname; do
 	    printf 'host %s { hardware ethernet %s; fixed-address %s; }\n' "$static_ip" "$static_mac" "$static_ip"
 	done <"$static_conf"
 
