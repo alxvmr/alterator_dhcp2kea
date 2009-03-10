@@ -49,11 +49,12 @@ lease_list()
 	'BEGIN { OFS = "_"}
 
 	match($0,/^[[:space:]]*lease[[:space:]]+([^[:space:]]+)[[:space:]]+\{[[:space:]]*$/,re) { r["ip"]=re[1]; }
+	match($0,/^[[:space:]]*binding state[[:space:]]+([^[:space:]]+)[[:space:]]*;[[:space:]]*$/,re) { r["state"] = re[1]; }
 	match($0,/^[[:space:]]*hardware ethernet[[:space:]]+([^[:space:]]+)[[:space:]]*;[[:space:]]*$/,re) { r["hw"] = re[1]; }
 	match($0,/^[[:space:]]*ends[[:space:]]+[^[:space:]]+[[:space:]]+([^;]+);[[:space:]]*$/,re) { r["expired"]=re[1]; }
 	match($0,/^[[:space:]]*client-hostname[[:space:]]+"([^;"]+)"[[:space:]]*;[[:space:]]*$/,re) { r["hostname"]=re[1]; }
 
-	/^[[:space:]]*}[[:space:]]*$/	{ print r["ip"],r["hw"],r["expired"],r["hostname"]; for (i in r) delete r[i]; } ' \
+	/^[[:space:]]*}[[:space:]]*$/	{ if (r["state"] == "active") print r["ip"],r["hw"],r["expired"],r["hostname"]; for (i in r) delete r[i]; } ' \
 	"$lease_conf"
 }
 
