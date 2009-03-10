@@ -41,7 +41,7 @@ DHCP configuration alterator module
 %config(noreplace) %_sysconfdir/alterator/dhcp
 %_altdata_dir/applications/*
 %_altdata_dir/interfaces/*/*/*
-%_altdata_dir/templates/*
+%_altdata_dir/ui/*
 %_alterator_backend3dir/*
 
 %changelog
