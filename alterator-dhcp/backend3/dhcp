@@ -11,6 +11,23 @@ alterator_api_version=1
 lease_conf="/var/lib/dhcp/dhcpd/state/dhcpd.leases"
 general_conf="/etc/alterator/dhcp/general"
 static_conf="/etc/alterator/dhcp/static"
+ddns_add_tool="/usr/sbin/ddns-add-host"
+ddns_del_tool="/usr/sbin/ddns-del-host"
+
+### ddns bindings
+ddns_add()
+{
+    [ -x "$ddns_add_tool" ] || return
+    "$ddns_add_tool" "$1" "$2"
+}
+
+ddns_del()
+{
+    [ -x "$ddns_del_tool" ] || return
+    "$ddns_del_tool" "$1" "$2"
+}
+
+### static bindings
 
 static_list()
 {
@@ -19,6 +36,11 @@ static_list()
 
 static_del()
 {
+    local IFS='	'
+    grep "^$(quote_sed_regexp "$1")[[:space:]]" "$static_conf"|
+	(read mac ip hname;
+	    [ -z "$ip" -o -z "$hname" ] || ddns_del "$ip" "$hname")
+
     sed "/^$(quote_sed_regexp "$1")[[:space:]]/ d" -i "$static_conf"
 }
 
@@ -31,17 +53,17 @@ static_has()
 static_add()
 {
     printf '%s	%s	%s\n' "$1" "$2" "$3">>"$static_conf"
+
+    [ -z "$2" -o -z "$3" ] || ddns_add "$2" "$3"
 }
 
 static_rename()
 {
-    local mac="$1"
-    local ip="${2:-$4}"
-    local hname="${3:-$5}"
-
-    static_del "$mac"
-    static_add "$mac" "$ip" "$hname"
+    static_del "$1"
+    static_add "$1" "$2" "$3"
 }
+
+### dynamic bindings
 
 lease_list()
 {
@@ -197,9 +219,7 @@ on_message()
 			    grep "^$in_mac[[:space:]]" "$static_conf"|
 				(read mac ip hname;
 				    write_string_param mac "$mac"
-				    write_string_param old_static_ip "$ip"
 				    write_string_param new_static_ip "$ip"
-				    write_string_param old_static_hname "$hname"
 				    write_string_param new_static_hname "$hname")
 			;;
 		    esac
@@ -250,7 +270,7 @@ on_message()
 			;;
 			static)
 			    [ -n "$in_mac" ] || return
-			    static_rename "$in_mac" "$in_new_static_ip" "$in_new_static_hname" "$in_old_static_ip" "$in_old_static_hname"
+			    static_rename "$in_mac" "$in_new_static_ip" "$in_new_static_hname"
 			;;
 		    esac
 		    alterator-dhcp-reset
