@@ -1,8 +1,8 @@
 %define _altdata_dir %_datadir/alterator
 
 Name: alterator-dhcp
-Version: 0.4
-Release: alt2
+Version: 0.5
+Release: alt1
 Packager: Grigory Batalov <bga@altlinux.ru>
 
 Summary: alterator module for dhcp conf file editing
@@ -45,6 +45,9 @@ DHCP configuration alterator module
 %_alterator_backend3dir/*
 
 %changelog
+* Tue Mar 10 2009 Stanislav Ievlev <inger@altlinux.org> 0.5-alt1
+- add support for ddns
+
 * Thu Mar 05 2009 Stanislav Ievlev <inger@altlinux.org> 0.4-alt2
 - add support for pxe
 
