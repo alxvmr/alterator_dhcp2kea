@@ -88,8 +88,9 @@
 		<thead>
 			<tr>
 			    <th>&nbsp;</th>
-			    <th><span translate="_">Host address</span></th>
+			    <th><span translate="_">IP address</span></th>
 			    <th><span translate="_">MAC address</span></th>
+			    <th><span translate="_">Computer name</span></th>
 			</tr>
 		    </thead>
 		    <tbody optionlist="/subnets" class="alterator-list">
@@ -97,6 +98,7 @@
 			    <td><input type="checkbox" name="static_name"/></td>
 			    <td><span class="alterator-label" name="static_ip"/></td>
 			    <td><span class="alterator-label" name="static_mac"/></td>
+			    <td><span class="alterator-label" name="static_hname"/></td>
 			</tr>
 		    </tbody>
 		</table>
@@ -105,17 +107,27 @@
 	
 	<input type="submit" class="btn" name="static_del" value="Remove selected"/><br/>
 	<br/>
-	<table>
+	<span translate="_">New static address:</span>
+	<br/><br/>
+	<table class="form-table">
 	    <tr>
-		<td><span name="new_static_ip" translate="_">Host address:</span></td>
+		<td><span name="new_static_ip" translate="_">IP address:</span></td>
 		<td><input type="text" class="text" name="new_static_ip"/></td>
+	    </tr>
+	    <tr>
 		<td><span name="new_static_mac" translate="_">MAC address:</span></td>
 		<td><input type="text" class="text" name="new_static_mac"/></td>
-		<td><input type="submit" class="btn" name="static_add" value="Add"/></td>
+	    </tr>
+	    <tr>
+		<td><span name="new_static_hname" translate="_">Computer name:</span></td>
+		<td><input type="text" class="text" name="new_static_hname"/></td>
 	    </tr>
 	    <tr>
 		<td>&nbsp;</td>
-		<td><small><span translate="_">(DNS name or IP address)</span></small></td>
+	    </tr>
+	    <tr>
+		<td>&nbsp;</td>
+		<td><input type="submit" class="btn" name="static_add" value="Add"/></td>
 	    </tr>
 	</table>
 	<hr/>
@@ -127,7 +139,7 @@
 		<thead>
 			<tr>
 			    <th>&nbsp;</th>
-			    <th><span translate="_">Host name</span></th>
+			    <th><span translate="_">Computer name</span></th>
 			    <th><span translate="_">MAC address</span></th>
 			    <th><span translate="_">IP address</span></th>
 			    <th><span translate="_">Expiration time</span></th>
