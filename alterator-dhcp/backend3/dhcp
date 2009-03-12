@@ -13,6 +13,7 @@ general_conf="/etc/alterator/dhcp/general"
 static_conf="/etc/alterator/dhcp/static"
 ddns_add_tool="/usr/sbin/ddns-add-host"
 ddns_del_tool="/usr/sbin/ddns-del-host"
+ddns_check_tool="/usr/sbin/ddns-check-name"
 
 ### ddns bindings
 ddns_add()
@@ -47,6 +48,13 @@ static_del()
 static_has()
 {
     grep -qs "^$(quote_sed_regexp "$1")[[:space:]]" "$static_conf"
+}
+
+static_check_name()
+{
+    [ -z "$1" ] ||
+	[ ! -x "$ddns_check_tool" ] ||
+	"$ddns_check_tool" "$1"
 }
 
 #TODO: check ip range
@@ -123,6 +131,8 @@ do_lease_fix()
 	mac="${i##${ip}_}"
 	mac="${mac%%_*}"
 	hname="${i##${ip}_${mac}_}"
+
+	static_check_name "$hname" || continue
 
 	static_has "$mac" || static_add "$mac" "$ip" "$hname"
     done
@@ -261,6 +271,9 @@ on_message()
 			    if static_has "$in_new_static_mac"; then
 				write_error "`_ "Same entry already exists"`"
 				return
+			    elif ! static_check_name "$in_new_static_hname";then
+				write_error "`_ "This computer name is registered for internal purposes"`"
+				return
 			    else
 				static_add "$in_new_static_mac" "$in_new_static_ip" "$in_new_static_hname"
 			    fi
@@ -270,7 +283,12 @@ on_message()
 			;;
 			static)
 			    [ -n "$in_mac" ] || return
-			    static_rename "$in_mac" "$in_new_static_ip" "$in_new_static_hname"
+			    if ! static_check_name "$in_new_static_hname"; then
+				write_error "`_ "This computer name is registered for internal purposes"`"
+				return
+			    else
+				static_rename "$in_mac" "$in_new_static_ip" "$in_new_static_hname"
+			    fi
 			;;
 		    esac
 		    alterator-dhcp-reset
