@@ -3,7 +3,7 @@
 general_conf="/etc/alterator/dhcp/general"
 static_conf="/etc/alterator/dhcp/static"
 dhcpd_conf="/etc/dhcp/dhcpd.conf"
-ddns_tool="/usr/sbin/ddns-print-dhcp"
+ddns_tool="/usr/sbin/dhcp-print-config"
 
 . shell-config
 . alterator-net-functions
