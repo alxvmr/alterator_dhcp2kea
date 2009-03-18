@@ -2,7 +2,7 @@
 
 Name: alterator-dhcp
 Version: 0.5
-Release: alt2
+Release: alt3
 Packager: Grigory Batalov <bga@altlinux.ru>
 
 Summary: alterator module for dhcp conf file editing
@@ -46,6 +46,9 @@ DHCP configuration alterator module
 %_libexecdir/alterator/hooks/net-eth.d/*
 
 %changelog
+* Wed Mar 18 2009 Stanislav Ievlev <inger@altlinux.org> 0.5-alt3
+- more integration with ddns
+
 * Thu Mar 12 2009 Stanislav Ievlev <inger@altlinux.org> 0.5-alt2
 - add checking for reserved names
 
