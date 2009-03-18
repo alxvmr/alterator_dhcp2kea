@@ -144,7 +144,7 @@ on_message()
 		type)
 		    write_type_item	ip_start		ipv4-address
 		    write_type_item	ip_end			ipv4-address
-		    write_type_item	client_dns		ipv4-address
+		    write_type_item	client_dns		dhcp-dns-address
 		    write_type_item	client_search		hostname
 		    write_type_item	client_gw		ipv4-address
 		    write_type_item	new_static_ip		ipv4-address
