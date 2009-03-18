@@ -78,7 +78,10 @@ generate()
     [ -z "$client_ntp" ] || printf '\toption ntp-servers %s;\n' "$(smart_addr "$client_ntp" "$ip")"
     [ -z "$client_gw" ] || printf '\toption routers %s;\n' "$client_gw"
     [ -z "$client_dns" ] || printf '\toption domain-name-servers %s;\n' "$(smart_addr "$client_dns" "$ip")"
-    [ -z "$client_search" ] || printf '\toption domain-name "%s";\n' "$client_search"
+    if [ -n "$client_search" ];then
+	local client_domain="${client_search%% *}"
+	printf '\toption domain-name "%s";\n' "$client_domain"
+    fi
     [ -z "$client_time" ] || printf '\tdefault-lease-time %s;\n\tmax-lease-time %s;\n' "$client_time" "$client_time"
 
 	printf '\trange %s %s;\n' "$ip_start" "$ip_end"
