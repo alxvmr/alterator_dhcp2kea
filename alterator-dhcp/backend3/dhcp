@@ -224,6 +224,9 @@ on_message()
 			    write_string_param client_dns "$(shell_config_get "$general_conf" client_dns)"
 			    write_string_param client_gw "$(shell_config_get "$general_conf" client_gw)"
 			    write_string_param client_search "$(shell_config_get "$general_conf" client_search)"
+
+			    [ ! -x "$ddns_check_tool" ]
+			    write_bool_param has_ddns "$?"
 			    ;;
 			static)
 			    grep "^$in_mac[[:space:]]" "$static_conf"|
