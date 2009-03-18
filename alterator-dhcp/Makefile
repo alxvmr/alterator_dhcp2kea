@@ -13,3 +13,4 @@ install-data:
 	for i in bin/*; do \
 	    install -Dpm755 $$i $(bindir)/$${i##*/}; \
 	done
+	install -Dpm 755 alterator-dhcp.hook $(libexecdir)/alterator/hooks/net-eth.d/alterator-dhcp

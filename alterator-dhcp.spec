@@ -43,6 +43,7 @@ DHCP configuration alterator module
 %_altdata_dir/interfaces/*/*/*
 %_altdata_dir/ui/*
 %_alterator_backend3dir/*
+%_libexecdir/alterator/hooks/net-eth.d/*
 
 %changelog
 * Thu Mar 12 2009 Stanislav Ievlev <inger@altlinux.org> 0.5-alt2

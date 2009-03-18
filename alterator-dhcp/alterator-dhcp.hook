@@ -1,0 +1,15 @@
+#!/bin/sh
+
+general_conf=/etc/alterator/dhcp/general
+static_conf=/etc/alterator/dhcp/static
+
+. shell-config
+
+dhcp_iface="$(shell_config_get "$general_conf" iface)"
+
+[ -n "$dhcp_iface" -a "$dhcp_iface" = "$1" ] || exit 0
+
+if [ "$new_configuration" = "dhcp" -o "$new_configuration" = "ipv4ll" -o "$old_ip" != "$new_ip" ];then
+    rm -f -- "$general_conf" "$static_conf"
+    /sbin/service dhcpd stop
+fi
