@@ -15,6 +15,7 @@ Source: %name-%version.tar
 BuildArch: noarch
 
 Requires: alterator >= 4.0-alt18 alterator-sh-functions alterator-net-common >= 0.5-alt1
+Requires: alterator-l10n >= 2.1-alt11
 Requires: dhcp-server
 Requires: alterator-services
 Conflicts: alterator-fbi < 5.1-alt5
