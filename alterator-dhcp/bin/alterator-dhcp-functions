@@ -1,0 +1,52 @@
+#!/bin/sh -efu
+
+dhcp_generalconf_file="/etc/alterator/dhcp/general"
+
+. shell-config
+
+### daemon
+
+dhcp_daemon_status()
+{
+    local IFS=' '
+    local runlevel="$(/sbin/runlevel | cut -c3)"
+
+    LANG=C LC_ALL=C /sbin/chkconfig --list dhcpd|grep -qs "${runlevel}:on" || return 1
+    /sbin/service dhcpd status >/dev/null || return 1
+}
+
+dhcp_daemon_on()
+{
+    dhcp_daemon_status && return 0
+
+    /sbin/chkconfig dhcpd on
+    /sbin/service dhcpd start >&2 || :
+}
+
+dhcp_daemon_off()
+{
+    /sbin/service dhcpd condstop >&2
+    /sbin/chkconfig dhcpd off
+}
+
+dhcp_daemon_condreload()
+{
+    /sbin/service dhcpd condreload
+}
+
+### config file
+
+dhcp_config_get()
+{
+    shell_config_get "$dhcp_generalconf_file" "$1"
+}
+
+dhcp_config_set()
+{
+    shell_config_set "$dhcp_generalconf_file" "$1" "$2"
+}
+
+dhcp_update_config()
+{
+    alterator-dhcp-reset && dhcp_daemon_condreload || :
+}

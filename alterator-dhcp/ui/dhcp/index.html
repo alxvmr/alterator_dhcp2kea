@@ -8,7 +8,6 @@
     </script>
   </head>
   <body>
-    <a href="/services?name=dhcpd"><span translate="_">Start, stop or restart service...</span></a>
     <form method="POST">
 
       <div name="noiface_warn">
@@ -23,6 +22,13 @@
 	    </tr>
 	    <tr>
 		<td colspan="2" style="text-align:left"><strong><span translate="_">General settings</span></strong></td>
+	    </tr>
+	    <tr>
+		<td colspan="2">&nbsp;</td>
+	    </tr>
+	    <tr>
+		<td>&nbsp;</td>
+		<td><input type="checkbox" name="daemon"/><span translate="_">Enable DHCP server</span></td>
 	    </tr>
 	    <tr>
 		<td colspan="2">&nbsp;</td>

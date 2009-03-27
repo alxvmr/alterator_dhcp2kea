@@ -4,12 +4,11 @@ alterator_api_version=1
 
 . alterator-sh-functions
 . alterator-net-functions
+. alterator-dhcp-functions
 
-. shell-config
 . shell-quote
 
 lease_conf="/var/lib/dhcp/dhcpd/state/dhcpd.leases"
-general_conf="/etc/alterator/dhcp/general"
 static_conf="/etc/alterator/dhcp/static"
 ddns_add_tool="/usr/sbin/ddns-add-host"
 ddns_del_tool="/usr/sbin/ddns-del-host"
@@ -100,9 +99,9 @@ write_date()
 
 check_dhcpd_conf()
 {
-    local iface="$(shell_config_get "$general_conf" iface)"
-    local ip_start="$(shell_config_get "$general_conf" ip_start)"
-    local ip_end="$(shell_config_get "$general_conf" ip_end)"
+    local iface="$(dhcp_config_get iface)"
+    local ip_start="$(dhcp_config_get ip_start)"
+    local ip_end="$(dhcp_config_get ip_end)"
 
     if [ -z "$in_iface" ]; then
 	write_error "`_ "You should define network interface"`"
@@ -202,14 +201,17 @@ on_message()
 		read)
 		    case "$in__objects" in
 			/)
-			    local iface="$(shell_config_get "$general_conf" iface)"
+			    ! dhcp_daemon_status
+			    write_bool_param daemon "$?"
+
+			    local iface="$(dhcp_config_get iface)"
 			    [ -n "$iface" ] || iiface="$(list_static_iface|head -n1)"
 			
 			    local ip="$(read_iface_addr "/etc/net/ifaces/$iface")"
 			    netname "$ip"|
 				(read network_name network_begin network_end
-				    ip_start="$(shell_config_get "$general_conf" ip_start)"
-				    ip_end="$(shell_config_get "$general_conf" ip_end)"
+				    ip_start="$(dhcp_config_get ip_start)"
+				    ip_end="$(dhcp_config_get ip_end)"
 
 				    if ! netcheck "$network_name" "$ip_start" "$ip_end"; then
 					ip_start=
@@ -220,10 +222,10 @@ on_message()
 				    write_string_param ip_start "$ip_start"
 				    write_string_param ip_end "$ip_end")
 			    write_string_param iface "$iface"
-			    write_string_param client_time "$(shell_config_get "$general_conf" client_time)"
-			    write_string_param client_dns "$(shell_config_get "$general_conf" client_dns)"
-			    write_string_param client_gw "$(shell_config_get "$general_conf" client_gw)"
-			    write_string_param client_search "$(shell_config_get "$general_conf" client_search)"
+			    write_string_param client_time "$(dhcp_config_get client_time)"
+			    write_string_param client_dns "$(dhcp_config_get client_dns)"
+			    write_string_param client_gw "$(dhcp_config_get client_gw)"
+			    write_string_param client_search "$(dhcp_config_get client_search)"
 
 			    [ ! -x "$ddns_check_tool" ]
 			    write_bool_param has_ddns "$?"
@@ -240,6 +242,12 @@ on_message()
 		write)
 		    case "$in__objects" in
 		    /)
+			if test_bool "$in_daemon"; then
+			    dhcp_daemon_on
+			else
+			    dhcp_daemon_off
+			fi
+
 			if [ -n "$in_general" -a -n "$in_iface" ];then
 			    local ip="$(read_iface_addr "/etc/net/ifaces/$in_iface")"
 			    netname "$ip"|
@@ -253,19 +261,19 @@ on_message()
 					write_error "`_ "Invalid address range"`"
 					return 1
 				    else
-					shell_config_set "$general_conf" ip_start "$in_ip_start"
-					shell_config_set "$general_conf" ip_end "$in_ip_end"
+					dhcp_config_set ip_start "$in_ip_start"
+					dhcp_config_set ip_end "$in_ip_end"
 					return 0
 				    fi
 				) || return
 
-			    shell_config_set "$general_conf" iface "$in_iface"
-			    shell_config_set "$general_conf" client_time "$in_client_time"
-			    shell_config_set "$general_conf" client_dns "$in_client_dns"
-			    shell_config_set "$general_conf" client_gw "$in_client_gw"
-			    shell_config_set "$general_conf" client_search "$in_client_search"
+			    dhcp_config_set iface "$in_iface"
+			    dhcp_config_set client_time "$in_client_time"
+			    dhcp_config_set client_dns "$in_client_dns"
+			    dhcp_config_set client_gw "$in_client_gw"
+			    dhcp_config_set client_search "$in_client_search"
 
-			    shell_config_set "$general_conf" client_gw "$in_client_gw"
+			    dhcp_config_set client_gw "$in_client_gw"
 			elif ! check_dhcpd_conf; then #check general conf before any other actions
 			    return
 			elif [ -n "$in_static_del" -a -n "$in_static_name" ];then
@@ -284,7 +292,7 @@ on_message()
 			    do_lease_fix
 			fi
 			;;
-			static)
+		    static)
 			    [ -n "$in_mac" ] || return
 			    if ! static_check_name "$in_new_static_hname"; then
 				write_error "`_ "This computer name is registered for internal purposes"`"
@@ -294,7 +302,7 @@ on_message()
 			    fi
 			;;
 		    esac
-		    alterator-dhcp-reset
+		    dhcp_update_config
 		    ;;
 	esac
 }
