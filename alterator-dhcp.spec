@@ -41,8 +41,8 @@ DHCP configuration alterator module
 %_bindir/*
 %config(noreplace) %_sysconfdir/alterator/dhcp
 %_altdata_dir/applications/*
-%_altdata_dir/interfaces/*/*/*
 %_altdata_dir/ui/*
+%_altdata_dir/type/*
 %_alterator_backend3dir/*
 %_libexecdir/alterator/hooks/net-eth.d/*
 

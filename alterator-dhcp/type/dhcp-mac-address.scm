@@ -1,4 +1,4 @@
-(define-module (alterator type dhcp-mac-address)
+(define-module (type dhcp-mac-address)
     :use-module (alterator woo)
     :export (type))
 
