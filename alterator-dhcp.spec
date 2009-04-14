@@ -1,8 +1,8 @@
 %define _altdata_dir %_datadir/alterator
 
 Name: alterator-dhcp
-Version: 0.5
-Release: alt4
+Version: 0.6
+Release: alt1
 Packager: Grigory Batalov <bga@altlinux.ru>
 
 Summary: alterator module for dhcp conf file editing
@@ -14,13 +14,13 @@ Source: %name-%version.tar
 
 BuildArch: noarch
 
-Requires: alterator >= 4.0-alt18 alterator-sh-functions alterator-net-common >= 0.5-alt1
+Requires: alterator >= 4.10-alt1 alterator-sh-functions alterator-net-common >= 0.5-alt1
 Requires: alterator-l10n >= 2.1-alt11
 Requires: dhcp-server
 Requires: alterator-services
-Conflicts: alterator-fbi < 5.1-alt5
+Conflicts: alterator-fbi < 5.11-alt1
 
-BuildPreReq: alterator >= 4.0-alt18
+BuildPreReq: alterator >= 4.10-alt1
 
 # Automatically added by buildreq on Mon Jul 11 2005 (-bi)
 BuildRequires: alterator
@@ -47,6 +47,9 @@ DHCP configuration alterator module
 %_libexecdir/alterator/hooks/net-eth.d/*
 
 %changelog
+* Tue Apr 14 2009 Stanislav Ievlev <inger@altlinux.org> 0.6-alt1
+- move type definition to more convenient place
+
 * Fri Mar 27 2009 Stanislav Ievlev <inger@altlinux.org> 0.5-alt4
 - start/stop service directly in module interface
 - improve external interface (alterator-dhcp-functions)
