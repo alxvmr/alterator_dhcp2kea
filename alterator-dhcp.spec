@@ -2,8 +2,8 @@
 
 Name: alterator-dhcp
 Version: 0.6
-Release: alt1
-Packager: Grigory Batalov <bga@altlinux.ru>
+Release: alt2
+Packager: Stanislav Ievlev <inger@altlinux.org>
 
 Summary: alterator module for dhcp conf file editing
 License: GPL
@@ -47,6 +47,9 @@ DHCP configuration alterator module
 %_libexecdir/alterator/hooks/net-eth.d/*
 
 %changelog
+* Fri Apr 17 2009 Stanislav Ievlev <inger@altlinux.org> 0.6-alt2
+- start daemon after config update
+
 * Tue Apr 14 2009 Stanislav Ievlev <inger@altlinux.org> 0.6-alt1
 - move type definition to more convenient place
 

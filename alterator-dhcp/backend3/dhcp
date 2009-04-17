@@ -242,12 +242,6 @@ on_message()
 		write)
 		    case "$in__objects" in
 		    /)
-			if test_bool "$in_daemon"; then
-			    dhcp_daemon_on
-			else
-			    dhcp_daemon_off
-			fi
-
 			if [ -n "$in_general" -a -n "$in_iface" ];then
 			    local ip="$(read_iface_addr "/etc/net/ifaces/$in_iface")"
 			    netname "$ip"|
@@ -291,18 +285,27 @@ on_message()
 			elif [ -n "$in_lease_fix" -a -n "$in_lease_name" ]; then
 			    do_lease_fix
 			fi
+
+			dhcp_update_config
+
+			if test_bool "$in_daemon"; then
+			    dhcp_daemon_on
+			else
+			    dhcp_daemon_off
+			fi
 			;;
 		    static)
-			    [ -n "$in_mac" ] || return
-			    if ! static_check_name "$in_new_static_hname"; then
-				write_error "`_ "This computer name is registered for internal purposes"`"
-				return
-			    else
-				static_rename "$in_mac" "$in_new_static_ip" "$in_new_static_hname"
-			    fi
+			[ -n "$in_mac" ] || return
+			if ! static_check_name "$in_new_static_hname"; then
+			    write_error "`_ "This computer name is registered for internal purposes"`"
+			    return
+			else
+			    static_rename "$in_mac" "$in_new_static_ip" "$in_new_static_hname"
+			fi
+
+			dhcp_update_config
 			;;
 		    esac
-		    dhcp_update_config
 		    ;;
 	esac
 }
