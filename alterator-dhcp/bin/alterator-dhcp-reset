@@ -4,6 +4,7 @@ general_conf="/etc/alterator/dhcp/general"
 static_conf="/etc/alterator/dhcp/static"
 dhcpd_conf="/etc/dhcp/dhcpd.conf"
 ddns_tool="/usr/sbin/dhcp-print-config"
+kdc_tool="/usr/bin/alterator-kdc-dhcp-host-option"
 
 . shell-config
 . alterator-net-functions
@@ -54,7 +55,9 @@ generate()
     local static_map= static_ip=
     [ ! -s "$static_conf" ] ||
 	while IFS="	" read static_mac static_ip static_hname; do
-	    printf 'host %s { hardware ethernet %s; fixed-address %s; }\n' "$static_ip" "$static_mac" "$static_ip"
+	    printf 'host %s { hardware ethernet %s; fixed-address %s; ' "$static_ip" "$static_mac" "$static_ip"
+	    [ ! -x "$kdc_tool" ] || $kdc_tool "$static_hname"
+	    echo '}'
 	done <"$static_conf"
 
     printf '\n'
