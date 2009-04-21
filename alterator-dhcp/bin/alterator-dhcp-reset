@@ -51,6 +51,7 @@ generate()
     [ -x "$ddns_tool" ] && "$ddns_tool" || printf 'ddns-update-style none;\n'
 
     printf 'authoritative;\n\n'
+    printf 'option space altlinux;\noption altlinux.keydata code 2 = string;\nvendor-option-space altlinux;\n\n'
 
     local static_map= static_ip=
     [ ! -s "$static_conf" ] ||
