@@ -8,7 +8,6 @@ alterator_api_version=1
 
 . shell-quote
 
-lease_conf="/var/lib/dhcp/dhcpd/state/dhcpd.leases"
 static_conf="/etc/alterator/dhcp/static"
 ddns_add_tool="/usr/sbin/ddns-add-host"
 ddns_del_tool="/usr/sbin/ddns-del-host"
@@ -60,7 +59,7 @@ static_check_name()
 static_add()
 {
     printf '%s	%s	%s\n' "$1" "$2" "$3">>"$static_conf"
-
+    dhcp_lease_remove "$2"
     [ -z "$2" -o -z "$3" ] || ddns_add "$2" "$3"
 }
 
@@ -71,23 +70,6 @@ static_rename()
 }
 
 ### dynamic bindings
-
-lease_list()
-{
-    /bin/awk \
-	'BEGIN { OFS = "_"}
-
-	match($0,/^[[:space:]]*lease[[:space:]]+([^[:space:]]+)[[:space:]]+\{[[:space:]]*$/,re) { r["ip"]=re[1]; }
-	match($0,/^[[:space:]]*binding state[[:space:]]+([^[:space:]]+)[[:space:]]*;[[:space:]]*$/,re) { r["state"] = re[1]; }
-	match($0,/^[[:space:]]*hardware ethernet[[:space:]]+([^[:space:]]+)[[:space:]]*;[[:space:]]*$/,re) { r["hw"] = re[1]; }
-	match($0,/^[[:space:]]*ends[[:space:]]+[^[:space:]]+[[:space:]]+([^;]+);[[:space:]]*$/,re) { r["expired"]=re[1]; }
-	match($0,/^[[:space:]]*client-hostname[[:space:]]+"([^;"]+)"[[:space:]]*;[[:space:]]*$/,re) { r["hostname"]=re[1]; }
-
-	/^[[:space:]]*}[[:space:]]*$/	{ if (r["state"] == "active") print r["ip"],r["hw"],r["expired"],r["hostname"]; for (i in r) delete r[i]; } ' \
-	"$lease_conf"
-}
-
-
 write_date()
 {
     local langlist="$(write_language "$in_language")"
@@ -95,7 +77,6 @@ write_date()
 
     LC_TIME="$firstlang" date -d "$1 GMT"
 }
-
 
 check_dhcpd_conf()
 {
@@ -153,7 +134,7 @@ on_message()
 		list)
 		    case "$in__objects" in
 			avail_lease)
-			    lease_list|
+			    dhcp_lease_list|
 				while IFS='_' read -r ip mac expired hname; do
 				    static_has "$mac" ||
 					write_table_item \

@@ -1,8 +1,10 @@
 #!/bin/sh -efu
 
 dhcp_generalconf_file="/etc/alterator/dhcp/general"
+dhcp_lease_file="/var/lib/dhcp/dhcpd/state/dhcpd.leases"
 
 . shell-config
+. shell-quote
 
 ### daemon
 
@@ -49,4 +51,35 @@ dhcp_config_set()
 dhcp_update_config()
 {
     alterator-dhcp-reset && dhcp_daemon_condreload || :
+}
+
+#### leases
+
+dhcp_lease_list()
+{
+    /bin/awk \
+	'BEGIN { OFS = "_"}
+
+	match($0,/^[[:space:]]*lease[[:space:]]+([^[:space:]]+)[[:space:]]+\{[[:space:]]*$/,re) { r["ip"]=re[1]; }
+	match($0,/^[[:space:]]*binding state[[:space:]]+([^[:space:]]+)[[:space:]]*;[[:space:]]*$/,re) { r["state"] = re[1]; }
+	match($0,/^[[:space:]]*hardware ethernet[[:space:]]+([^[:space:]]+)[[:space:]]*;[[:space:]]*$/,re) { r["hw"] = re[1]; }
+	match($0,/^[[:space:]]*ends[[:space:]]+[^[:space:]]+[[:space:]]+([^;]+);[[:space:]]*$/,re) { r["expired"]=re[1]; }
+	match($0,/^[[:space:]]*client-hostname[[:space:]]+"([^;"]+)"[[:space:]]*;[[:space:]]*$/,re) { r["hostname"]=re[1]; }
+
+	/^[[:space:]]*}[[:space:]]*$/	{ if (r["state"] == "active") print r["ip"],r["hw"],r["expired"],r["hostname"]; for (i in r) delete r[i]; } ' \
+	"$dhcp_lease_file"
+}
+
+dhcp_lease_remove()
+{
+    local ip="$1";shift
+
+    dhcp_daemon_status
+    local running="$?"
+    /sbin/service dhcpd condstop >&2
+
+    sed "/^[[:space:]]*lease[[:space:]]\+$(quote_sed_regexp "$ip")[[:space:]]\+{/,/^[[:space:]]*}[[:space:]]*$/ d" \
+	-i "$dhcp_lease_file"
+
+    [ "$running" = "0" ] && /sbin/service dhcpd start >&2
 }
