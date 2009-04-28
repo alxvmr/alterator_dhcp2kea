@@ -2,7 +2,7 @@
 
 Name: alterator-dhcp
 Version: 0.6
-Release: alt3
+Release: alt4
 Packager: Stanislav Ievlev <inger@altlinux.org>
 
 Summary: alterator module for dhcp conf file editing
@@ -47,6 +47,9 @@ DHCP configuration alterator module
 %_libexecdir/alterator/hooks/net-eth.d/*
 
 %changelog
+* Tue Apr 28 2009 Stanislav Ievlev <inger@altlinux.org> 0.6-alt4
+- improve static binding (add cleanup of dhcp leases)
+
 * Wed Apr 22 2009 Stanislav Ievlev <inger@altlinux.org> 0.6-alt3
 - introduce `altlinux' option space (sbolshakov@)
 - call kdc hook if exists during per-host dhcp option create (sbolshakov@)
