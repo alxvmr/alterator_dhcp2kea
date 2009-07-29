@@ -281,7 +281,8 @@ on_message()
 			    write_error "`_ "This computer name is registered for internal purposes"`"
 			    return
 			else
-			    static_rename "$in_mac" "$in_new_static_ip" "$in_new_static_hname"
+			    [ -z "$in_new_static_ip" ] ||
+				static_rename "$in_mac" "$in_new_static_ip" "$in_new_static_hname"
 			fi
 
 			dhcp_update_config
