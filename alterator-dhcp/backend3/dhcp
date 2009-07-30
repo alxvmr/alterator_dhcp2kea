@@ -249,6 +249,12 @@ on_message()
 			    dhcp_config_set client_search "$in_client_search"
 
 			    dhcp_config_set client_gw "$in_client_gw"
+
+			    if test_bool "$in_daemon"; then
+				dhcp_daemon_on
+			    else
+				dhcp_daemon_off
+			    fi
 			elif ! check_dhcpd_conf; then #check general conf before any other actions
 			    return
 			elif [ -n "$in_static_del" -a -n "$in_static_name" ];then
@@ -268,12 +274,6 @@ on_message()
 			fi
 
 			dhcp_update_config
-
-			if test_bool "$in_daemon"; then
-			    dhcp_daemon_on
-			else
-			    dhcp_daemon_off
-			fi
 			;;
 		    static)
 			[ -n "$in_mac" ] || return
