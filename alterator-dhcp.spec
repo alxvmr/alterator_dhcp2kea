@@ -1,8 +1,8 @@
 %define _altdata_dir %_datadir/alterator
 
 Name: alterator-dhcp
-Version: 0.6
-Release: alt4
+Version: 0.7
+Release: alt1
 Packager: Stanislav Ievlev <inger@altlinux.org>
 
 Summary: alterator module for dhcp conf file editing
@@ -18,7 +18,7 @@ Requires: alterator >= 4.10-alt1 alterator-sh-functions alterator-net-common >= 
 Requires: alterator-l10n >= 2.1-alt11
 Requires: dhcp-server
 Requires: alterator-services
-Conflicts: alterator-fbi < 5.11-alt1
+Conflicts: alterator-fbi < 5.17-alt2
 
 BuildPreReq: alterator >= 4.10-alt1
 
@@ -47,6 +47,12 @@ DHCP configuration alterator module
 %_libexecdir/alterator/hooks/net-eth.d/*
 
 %changelog
+* Thu Jul 30 2009 Stanislav Ievlev <inger@altlinux.org> 0.7-alt1
+- ui: use workflow 'none'
+- dhcp backend:
+  * update daemon status only in 'general' section.
+  * don't allow rename if ip address is empty
+
 * Tue Apr 28 2009 Stanislav Ievlev <inger@altlinux.org> 0.6-alt4
 - improve static binding (add cleanup of dhcp leases)
 
