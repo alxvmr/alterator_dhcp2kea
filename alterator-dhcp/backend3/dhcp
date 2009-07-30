@@ -138,7 +138,7 @@ on_message()
 				while IFS='_' read -r ip mac expired hname; do
 				    static_has "$mac" ||
 					write_table_item \
-					    lease_name "${ip}_${mac}_${hname}" \
+					    name "${ip}_${mac}_${hname}" \
 					    lease_ip "$ip" \
 					    lease_mac "$mac" \
 					    lease_hname "$hname" \
@@ -150,7 +150,6 @@ on_message()
 			    while read mac ip hname; do
 				write_table_item \
 				    name "$mac" \
-				    static_name "$mac" \
 				    static_mac "$mac" \
 				    static_ip "$ip" \
 				    static_hname "$hname"

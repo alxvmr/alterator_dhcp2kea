@@ -1,21 +1,16 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 <!-- dhcp administration module -->
-<html wf="form">
-  <head>
-    <script>
-      effectShow("noiface_warn", "iface", "");
-      effectHide("main_table", "iface", "");
-    </script>
-  </head>
+<html wf="none">
   <body>
     <form method="POST">
-
-      <div name="noiface_warn">
-        <p><span translate="_">You must have statically configured ethernet interface to setup dhcp server.</span><br/>
-        <a href="/net-eth"><span translate="_">Reconfigure ethernet interfaces...</span></a></p>
-      </div>
-
-      <div name="main_table">
+	<div name="nostatic_page" class="alterator-attention-message" style="float:none;display:none">
+	    <img src="/design/images/attention.gif"/>
+	    <span translate="_">You must have statically configured ethernet interface to setup dhcp server.</span>
+	    <br/>
+	    <br/>
+	    <a href="/net-eth"><span translate="_">Reconfigure ethernet interfaces...</span></a>
+	</div>
+	<div name="static_page">
 	<table class="form-table-annotated">
 	    <tr>
 		<td colspan="2">&nbsp;</td>
@@ -28,7 +23,7 @@
 	    </tr>
 	    <tr>
 		<td>&nbsp;</td>
-		<td><input type="checkbox" name="daemon"/><span translate="_">Enable DHCP server</span></td>
+		<td><input type="checkbox" name="daemon" value="#t"/><span translate="_">Enable DHCP server</span></td>
 	    </tr>
 	    <tr>
 		<td colspan="2">&nbsp;</td>
@@ -36,7 +31,7 @@
 	    <tr>
 		<td><span translate="_">Interface:</span></td>
 		<td>
-		    <select name="iface" enumref="/dhcp/avail_iface"/><br/>
+		    <select name="iface"/><br/>
 		    <small><span translate="_">(maximum possible address range)</span></small>
 		</td>
 	    </tr>
@@ -79,9 +74,9 @@
 	    <tr>
 		<td>&nbsp;</td>
 		<td>
-		    <input type="submit" class="btn" name="general" value="Apply"/>
+		    <input type="button" class="btn" name="apply_button" value="Apply"/>
 		    &nbsp;
-		    <input type="reset" class="btn" value="Reset"/>
+		    <input type="button" class="btn" name="reset_button" value="Reset"/>
 		</td>
 	    </tr>
 	</table>
@@ -90,31 +85,29 @@
 	<br/><br/>
 
 	<div style="width:100%;max-height:300px; overflow: auto;">
-	    <table class="alterator-listbox" enumref="/dhcp/avail_static" style="width:100%">
+	    <table name="static_name" class="alterator-listbox multi-select" style="width:100%">
 		<thead>
-			<tr>
-			    <th>&nbsp;</th>
-			    <th><span translate="_">IP address</span></th>
-			    <th><span translate="_">MAC address</span></th>
-			    <th><span translate="_">Computer name</span></th>
-			</tr>
-		    </thead>
-		    <tbody optionlist="/subnets" class="alterator-list">
-			<tr>
-			    <td><input type="checkbox" name="static_name"/></td>
-			    <td><a href="/dhcp/static?mac=" class="alterator-ref2">
-				    <span class="alterator-label" name="static_ip"/>
-				</a>
-			    </td>
-			    <td><span class="alterator-label" name="static_mac"/></td>
-			    <td><span class="alterator-label" name="static_hname"/></td>
-			</tr>
-		    </tbody>
-		</table>
+		    <tr>
+			<th><span translate="_">IP address</span></th>
+			<th><span translate="_">MAC address</span></th>
+			<th><span translate="_">Computer name</span></th>
+		    </tr>
+		</thead>
+		<tbody>
+		    <tr style="display:none">
+			<td><a class="alterator-href" prefix-href="/dhcp/static?mac=" name="name">
+				<span class="alterator-label" name="static_ip"/>
+			    </a>
+			</td>
+			<td><span class="alterator-label" name="static_mac"/></td>
+			<td><span class="alterator-label" name="static_hname"/></td>
+		    </tr>
+		</tbody>
+	    </table>
 	</div>
 	<br/>
 	
-	<input type="submit" class="btn" name="static_del" value="Remove selected"/><br/>
+	<input type="button" class="btn" name="static_del_button" value="Remove selected"/><br/>
 	<br/>
 	<span translate="_">New static address:</span>
 	<br/><br/>
@@ -136,7 +129,7 @@
 	    </tr>
 	    <tr>
 		<td>&nbsp;</td>
-		<td><input type="submit" class="btn" name="static_add" value="Add"/></td>
+		<td><input type="button" class="btn" name="static_add_button" value="Add"/></td>
 	    </tr>
 	</table>
 	<hr/>
@@ -144,30 +137,28 @@
 	<br/><br/>
 
 	<div style="width:100%;max-height:300px; overflow: auto;">
-	    <table class="alterator-listbox" enumref="/dhcp/avail_lease" style="width:100%">
+	    <table name="lease_name" class="alterator-listbox multi-select" style="width:100%">
 		<thead>
-			<tr>
-			    <th>&nbsp;</th>
-			    <th><span translate="_">Computer name</span></th>
-			    <th><span translate="_">MAC address</span></th>
-			    <th><span translate="_">IP address</span></th>
-			    <th><span translate="_">Expiration time</span></th>
-			</tr>
-		    </thead>
-		    <tbody optionlist="/subnets" class="alterator-list">
-			<tr>
-			    <td><input type="checkbox" name="lease_name"/></td>
-			    <td><span class="alterator-label" name="lease_hname"/></td>
-			    <td><span class="alterator-label" name="lease_mac"/></td>
-			    <td><span class="alterator-label" name="lease_ip"/></td>
-			    <td><span class="alterator-label" name="lease_expired"/></td>
-			</tr>
-		    </tbody>
-		</table>
+		    <tr>
+			<th><span translate="_">Computer name</span></th>
+			<th><span translate="_">MAC address</span></th>
+			<th><span translate="_">IP address</span></th>
+			<th><span translate="_">Expiration time</span></th>
+		    </tr>
+		</thead>
+		<tbody>
+		    <tr style="display:none">
+			<td><span class="alterator-label" name="lease_hname"/></td>
+			<td><span class="alterator-label" name="lease_mac"/></td>
+			<td><span class="alterator-label" name="lease_ip"/></td>
+			<td><span class="alterator-label" name="lease_expired"/></td>
+		    </tr>
+		</tbody>
+	    </table>
 	</div>
 	<br/>
-	<input type="submit" class="btn" name="lease_fix" value="Fix address for selected hosts"/>
-      </div>
+	<input type="button" class="btn" name="lease_fix_button" value="Fix address for selected hosts"/>
+	</div>
     </form>
   </body>
 </html>
