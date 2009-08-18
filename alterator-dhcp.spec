@@ -2,7 +2,7 @@
 
 Name: alterator-dhcp
 Version: 0.7
-Release: alt1
+Release: alt2
 Packager: Stanislav Ievlev <inger@altlinux.org>
 
 Summary: alterator module for dhcp conf file editing
@@ -47,6 +47,9 @@ DHCP configuration alterator module
 %_libexecdir/alterator/hooks/net-eth.d/*
 
 %changelog
+* Tue Aug 18 2009 Stanislav Ievlev <inger@altlinux.org> 0.7-alt2
+- update dhcp config before server start (closes: #21095)
+
 * Thu Jul 30 2009 Stanislav Ievlev <inger@altlinux.org> 0.7-alt1
 - ui: use workflow 'none'
 - dhcp backend:
