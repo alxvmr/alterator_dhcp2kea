@@ -12,6 +12,7 @@ static_conf="/etc/alterator/dhcp/static"
 ddns_add_tool="/usr/sbin/ddns-add-host"
 ddns_del_tool="/usr/sbin/ddns-del-host"
 ddns_check_tool="/usr/sbin/ddns-check-name"
+hooks_dir=/usr/lib/alterator/hooks/dhcp.d
 
 ### ddns bindings
 ddns_add()
@@ -220,7 +221,9 @@ on_message()
 		    case "$in__objects" in
 		    /)
 			if [ -n "$in_general" -a -n "$in_iface" ];then
-			    local ip="$(read_iface_addr "/etc/net/ifaces/$in_iface")"
+			    local old_iface="$(dhcp_config_get iface)" # previous value of iface
+			    local new_iface="$in_iface" # new value of iface
+			    local ip="$(read_iface_addr "/etc/net/ifaces/$new_iface")"
 
 			    if [ -z "$in_ip_start" -o -z "$in_ip_end" ];then
 				write_error "`_ "You should define address range"`"
@@ -236,7 +239,7 @@ on_message()
 			    dhcp_config_set ip_start "$in_ip_start"
 			    dhcp_config_set ip_end "$in_ip_end"
 
-			    dhcp_config_set iface "$in_iface"
+			    dhcp_config_set iface "$new_iface"
 			    dhcp_config_set client_time "$in_client_time"
 			    dhcp_config_set client_dns "$in_client_dns"
 			    dhcp_config_set client_gw "$in_client_gw"
@@ -250,6 +253,12 @@ on_message()
 				dhcp_daemon_on
 			    else
 				dhcp_daemon_off
+			    fi
+
+			    #postinstall hook
+			    if [ "$old_iface" != "$new_iface" ];then
+				export old_iface new_iface
+				run-parts "$hooks_dir"
 			    fi
 			elif ! check_dhcpd_conf; then #check general conf before any other actions
 			    return

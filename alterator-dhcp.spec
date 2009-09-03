@@ -45,6 +45,7 @@ DHCP configuration alterator module
 %_altdata_dir/type/*
 %_alterator_backend3dir/*
 %_libexecdir/alterator/hooks/net-eth.d/*
+%_libexecdir/alterator/hooks/dhcp.d
 
 %changelog
 * Tue Aug 18 2009 Stanislav Ievlev <inger@altlinux.org> 0.7-alt2
