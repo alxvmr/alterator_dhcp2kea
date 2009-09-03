@@ -30,7 +30,7 @@ ddns_del()
 
 static_list()
 {
-    cat "$static_conf"
+    [ ! -s "$static_conf" ] || cat "$static_conf"
 }
 
 static_del()
@@ -185,22 +185,22 @@ on_message()
 			    write_bool_param daemon "$?"
 
 			    local iface="$(dhcp_config_get iface)"
-			    [ -n "$iface" ] || iiface="$(list_static_iface|head -n1)"
+			    [ -n "$iface" ] || iface="$(list_static_iface|head -n1)"
 			
 			    local ip="$(read_iface_addr "/etc/net/ifaces/$iface")"
-			    netname "$ip"|
-				(read network_name network_begin network_end
-				    ip_start="$(dhcp_config_get ip_start)"
-				    ip_end="$(dhcp_config_get ip_end)"
+			    local ip_start="$(dhcp_config_get ip_start)"
+			    local ip_end="$(dhcp_config_get ip_end)"
 
-				    if ! netcheck "$network_name" "$ip_start" "$ip_end"; then
-					ip_start=
-					ip_end=
-				    fi
+			    if [ -z "$ip" ] ||
+			       ! ipv4addr_is_in_subnet "$ip_start" "$ip" ||
+			       ! ipv4addr_is_in_subnet "$ip_end" "$ip" ; then
+				ip_start=
+				ip_end=
+			    fi
 
-				    write_string_param network "$network_name ($network_begin - $network_end)"
-				    write_string_param ip_start "$ip_start"
-				    write_string_param ip_end "$ip_end")
+			    write_string_param ip_start "$ip_start"
+			    write_string_param ip_end "$ip_end"
+
 			    write_string_param iface "$iface"
 			    write_string_param client_time "$(dhcp_config_get client_time)"
 			    write_string_param client_dns "$(dhcp_config_get client_dns)"
@@ -224,22 +224,20 @@ on_message()
 		    /)
 			if [ -n "$in_general" -a -n "$in_iface" ];then
 			    local ip="$(read_iface_addr "/etc/net/ifaces/$in_iface")"
-			    netname "$ip"|
-				(
-				    read network_name network_begin network_end
 
-				    if [ -z "$in_ip_start" -o -z "$in_ip_end" ];then
-					write_error "`_ "You should define address range"`"
-					return 1
-				    elif ! netcheck "$network_name" "$in_ip_start" "$in_ip_end"; then
-					write_error "`_ "Invalid address range"`"
-					return 1
-				    else
-					dhcp_config_set ip_start "$in_ip_start"
-					dhcp_config_set ip_end "$in_ip_end"
-					return 0
-				    fi
-				) || return
+			    if [ -z "$in_ip_start" -o -z "$in_ip_end" ];then
+				write_error "`_ "You should define address range"`"
+				return 1
+			    elif ! ipv4addr_is_in_subnet "$in_ip_start" "$ip";then
+				write_error "`_ "Starting IP address is out of range"`"
+				return 1
+			    elif ! ipv4addr_is_in_subnet "$in_ip_end" "$ip";then
+				write_error "`_ "Ending IP address is out of range"`"
+				return 1
+			    fi
+
+			    dhcp_config_set ip_start "$in_ip_start"
+			    dhcp_config_set ip_end "$in_ip_end"
 
 			    dhcp_config_set iface "$in_iface"
 			    dhcp_config_set client_time "$in_client_time"
