@@ -72,10 +72,7 @@ static_rename()
 ### dynamic bindings
 write_date()
 {
-    local langlist="$(write_language "$in_language")"
-    local firstlang="${langlist%%:*}"
-
-    LC_TIME="$firstlang" date -d "$1 GMT"
+    run_localized date -d "$1 GMT"
 }
 
 check_dhcpd_conf()
