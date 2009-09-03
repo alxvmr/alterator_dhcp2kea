@@ -116,6 +116,18 @@ do_lease_fix()
     done
 }
 
+check_range()
+{
+    local first="$1";shift
+    local second="$1";shift
+    local net="$1";shift
+
+    [ -n "$first" ] &&
+    [ -n "$second" ] &&
+    ipv4addr_is_in_subnet "$first" "$net" &&
+    ipv4addr_is_in_subnet "$second" "$net"
+}
+
 on_message()
 {
 	case "$in_action" in
@@ -190,8 +202,7 @@ on_message()
 			    local ip_end="$(dhcp_config_get ip_end)"
 
 			    if [ -z "$ip" ] ||
-			       ! ipv4addr_is_in_subnet "$ip_start" "$ip" ||
-			       ! ipv4addr_is_in_subnet "$ip_end" "$ip" ; then
+			       ! check_range "$ip_start" "$ip_end" "$ip";then
 				ip_start=
 				ip_end=
 			    fi
@@ -225,14 +236,8 @@ on_message()
 			    local new_iface="$in_iface" # new value of iface
 			    local ip="$(read_iface_addr "/etc/net/ifaces/$new_iface")"
 
-			    if [ -z "$in_ip_start" -o -z "$in_ip_end" ];then
-				write_error "`_ "You should define address range"`"
-				return 1
-			    elif ! ipv4addr_is_in_subnet "$in_ip_start" "$ip";then
-				write_error "`_ "Starting IP address is out of range"`"
-				return 1
-			    elif ! ipv4addr_is_in_subnet "$in_ip_end" "$ip";then
-				write_error "`_ "Ending IP address is out of range"`"
+			    if ! check_range "$in_ip_start" "$in_ip_end" "$ip";then
+				write_error "`_ "Invalid address range"`"
 				return 1
 			    fi
 
