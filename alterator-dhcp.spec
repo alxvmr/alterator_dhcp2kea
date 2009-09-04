@@ -2,7 +2,7 @@
 
 Name: alterator-dhcp
 Version: 0.7
-Release: alt2
+Release: alt3
 Packager: Stanislav Ievlev <inger@altlinux.org>
 
 Summary: alterator module for dhcp conf file editing
@@ -14,7 +14,7 @@ Source: %name-%version.tar
 
 BuildArch: noarch
 
-Requires: alterator >= 4.10-alt1 alterator-sh-functions alterator-net-common >= 0.5-alt1
+Requires: alterator >= 4.10-alt1 alterator-sh-functions alterator-net-functions >= 1.0-alt3
 Requires: alterator-l10n >= 2.1-alt11
 Requires: dhcp-server
 Requires: alterator-services
@@ -48,6 +48,11 @@ DHCP configuration alterator module
 %_libexecdir/alterator/hooks/dhcp.d
 
 %changelog
+* Fri Sep 04 2009 Stanislav Ievlev <inger@altlinux.org> 0.7-alt3
+- improve address range check (use modern functions from alterator-net-functions)
+- add postinstall hook
+- backend: use run_localized() to write local date
+
 * Tue Aug 18 2009 Stanislav Ievlev <inger@altlinux.org> 0.7-alt2
 - update dhcp config before server start (closes: #21095)
 
