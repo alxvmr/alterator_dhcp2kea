@@ -1,9 +1,8 @@
 %define _altdata_dir %_datadir/alterator
 
 Name: alterator-dhcp
-Version: 0.7
-Release: alt3
-Packager: Stanislav Ievlev <inger@altlinux.org>
+Version: 0.8
+Release: alt1
 
 Summary: alterator module for dhcp conf file editing
 License: GPL
@@ -48,6 +47,9 @@ DHCP configuration alterator module
 %_libexecdir/alterator/hooks/dhcp.d
 
 %changelog
+* Tue Apr 20 2010 Anton V. Boyarshinov <boyarsh@altlinux.ru> 0.8-alt1
+- make it usable without ddns
+
 * Fri Sep 04 2009 Stanislav Ievlev <inger@altlinux.org> 0.7-alt3
 - improve address range check (use modern functions from alterator-net-functions)
 - add postinstall hook
