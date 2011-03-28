@@ -2,7 +2,7 @@
 
 Name: alterator-dhcp
 Version: 0.8
-Release: alt2
+Release: alt2.1
 
 Summary: alterator module for dhcp conf file editing
 License: GPL
@@ -47,6 +47,9 @@ DHCP configuration alterator module
 %_libexecdir/alterator/hooks/dhcp.d
 
 %changelog
+* Mon Mar 28 2011 Anton V. Boyarshinov <boyarsh@altlinux.ru> 0.8-alt2.1
+- lost changes from previous release
+
 * Mon Mar 28 2011 Anton V. Boyarshinov <boyarsh@altlinux.ru> 0.8-alt2
 - don't use ddns if SERVER_ROLE not master
 

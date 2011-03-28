@@ -216,7 +216,8 @@ on_message()
 			    write_string_param client_gw "$(dhcp_config_get client_gw)"
 			    write_string_param client_search "$(dhcp_config_get client_search)"
 
-			    [ ! -x "$ddns_check_tool" ]
+			    role=$(shell_config_get /etc/sysconfig/system SERVER_ROLE)
+			    [ ! -x "$ddns_check_tool" ] || [  "$role" != 'master' ]
 			    write_bool_param has_ddns "$?"
 			    ;;
 			static)
