@@ -1,7 +1,7 @@
 %define _altdata_dir %_datadir/alterator
 
 Name: alterator-dhcp
-Version: 0.9
+Version: 0.9.1
 Release: alt1
 
 Summary: alterator module for dhcp conf file editing
@@ -48,6 +48,11 @@ DHCP configuration alterator module
 %_libexecdir/alterator/hooks/dhcp.d
 
 %changelog
+* Wed Dec 19 2012 Mikhail Efremov <sem@altlinux.org> 0.9.1-alt1
+- ipv6: Use hostname as host identifier in the dhcpd6.conf.
+- ipv6: Fix 'static' page.
+- Fix get_static_conf().
+
 * Wed Dec 19 2012 Mikhail Efremov <sem@altlinux.org> 0.9-alt1
 - Initial DHCPv6 support.
 
