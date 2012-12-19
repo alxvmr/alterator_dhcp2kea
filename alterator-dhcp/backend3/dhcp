@@ -19,8 +19,8 @@ hooks_dir=/usr/lib/alterator/hooks/dhcp.d
 get_static_conf()
 {
 	[ "$1" = 6 ] &&
-		echo "$static_conf_ipv4" ||
-		echo "$static_conf_ipv6"
+		echo "$static_conf_ipv6" ||
+		echo "$static_conf_ipv4"
 }
 
 ### ddns bindings
