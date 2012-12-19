@@ -134,7 +134,7 @@ generate_ipv6()
     local static_map= static_ip=
     [ ! -s "$static_conf" ] ||
 	while IFS="	" read static_mac static_ip static_hname; do
-	    printf 'host %s { hardware ethernet %s; fixed-address6 %s; ' "$static_ip" "$static_mac" "$static_ip"
+	    printf 'host %s { hardware ethernet %s; fixed-address6 %s; ' "$static_hname" "$static_mac" "$static_ip"
 	    [ ! -x "$kdc_tool" ] || $kdc_tool "$static_hname"
 	    echo '}'
 	done <"$static_conf"
