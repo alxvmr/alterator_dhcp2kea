@@ -164,6 +164,19 @@ check_range()
     $addr_is_in_subnet "$second" "$net"
 }
 
+read_static()
+{
+	local inmac="$1";shift
+	local ipv="$1";shift
+	local static_conf="$(get_static_conf "$ipv")"
+
+	grep "^$inmac[[:space:]]" "$static_conf"|
+	(read mac ip hname;
+		write_string_param mac "$mac"
+		write_string_param new_static_ip "$ip"
+		write_string_param new_static_hname "$hname")
+}
+
 on_message()
 {
 	case "$in_action" in
@@ -269,11 +282,7 @@ on_message()
 			    write_bool_param has_ddns "$?"
 			    ;;
 			static)
-			    grep "^$in_mac[[:space:]]" "$static_conf"|
-				(read mac ip hname;
-				    write_string_param mac "$mac"
-				    write_string_param new_static_ip "$ip"
-				    write_string_param new_static_hname "$hname")
+				read_static "$in_mac" "$in_ipv"
 			;;
 		    esac
 		    ;;
