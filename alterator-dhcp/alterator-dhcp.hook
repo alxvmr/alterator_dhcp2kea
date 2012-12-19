@@ -1,15 +1,44 @@
 #!/bin/sh
 
-general_conf=/etc/alterator/dhcp/general
-static_conf=/etc/alterator/dhcp/static
+ipv4_general_conf=/etc/alterator/dhcp/general
+ipv4_static_conf=/etc/alterator/dhcp/static
+ipv6_general_conf=/etc/alterator/dhcp6/general
+ipv6_static_conf=/etc/alterator/dhcp6/static
 
 . shell-config
 
-dhcp_iface="$(shell_config_get "$general_conf" iface)"
+dhcpd_stop()
+{
+	local dhcp_daemon="$1";shift
+	local general_conf="$1"; shift
+	local static_conf="$1"; shift
 
-[ -n "$dhcp_iface" -a "$dhcp_iface" = "$1" ] || exit 0
-
-if [ "$new_configuration" = "dhcp" -o "$new_configuration" = "ipv4ll" -o "$old_ip" != "$new_ip" ];then
     rm -f -- "$general_conf" "$static_conf"
-    /sbin/service dhcpd stop
+    /sbin/service "$dhcp_daemon" condstop
+}
+
+
+ipv4_dhcp_iface="$(shell_config_get "$ipv4_general_conf" iface)"
+ipv6_dhcp_iface="$(shell_config_get "$ipv6_general_conf" iface)"
+
+old_ipv4="$(echo "$old_ipv4addresses" | head -1)"
+new_ipv4="$(echo "$new_ipv4addresses" | head -1)"
+old_ipv6="$(echo "$old_ipv6addresses" | head -1)"
+new_ipv6="$(echo "$new_ipv6addresses" | head -1)"
+
+if [ -n "$ipv4_dhcp_iface" -a "$ipv4_dhcp_iface" = "$1" ]; then
+	if [ "$new_config_ipv4" = no -o \
+			"$new_ipv4configuration" = "dhcp" -o \
+			"$new_ipv4configuration" = "ipv4ll" -o \
+			"$old_ipv4" != "$new_ipv4" ]; then
+		dhcpd_stop dhcpd "$ipv4_general_conf" "$ipv4_static_conf"
+	fi
+fi
+
+if [ -n "$ipv6_dhcp_iface" -a "$ipv6_dhcp_iface" = "$1" ]; then
+	if [ "$new_config_ipv6" = no -o \
+			"$new_ipv6configuration" = "dhcp" -o \
+			"$old_ipv6" != "$new_ipv6" ]; then
+		dhcpd_stop dhcpd6 "$ipv6_general_conf" "$ipv6_static_conf"
+	fi
 fi

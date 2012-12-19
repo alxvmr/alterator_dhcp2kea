@@ -1,7 +1,9 @@
 #!/bin/sh -efu
 
 dhcp_generalconf_file="/etc/alterator/dhcp/general"
+dhcp6_generalconf_file="/etc/alterator/dhcp6/general"
 dhcp_lease_file="/var/lib/dhcp/dhcpd/state/dhcpd.leases"
+dhcp6_lease_file="/var/lib/dhcp/dhcpd6/state/dhcpd6.leases"
 
 . shell-config
 . shell-quote
@@ -10,53 +12,90 @@ dhcp_lease_file="/var/lib/dhcp/dhcpd/state/dhcpd.leases"
 
 dhcp_daemon_status()
 {
+	local ipv="${1-}"
     local IFS=' '
     local runlevel="$(/sbin/runlevel | cut -c3)"
 
-    LANG=C LC_ALL=C /sbin/chkconfig --list dhcpd|grep -qs "${runlevel}:on" || return 1
-    /sbin/service dhcpd status >/dev/null || return 1
+	[ "$ipv" = 6 ] || ipv=
+
+    LANG=C LC_ALL=C /sbin/chkconfig --list "dhcpd$ipv" |grep -qs "${runlevel}:on" || return 1
+    /sbin/service "dhcpd$ipv" status >/dev/null || return 1
 }
 
 dhcp_daemon_on()
 {
-    dhcp_daemon_status && return 0
+	local ipv="${1-}"
 
-    /sbin/chkconfig dhcpd on
-    /sbin/service dhcpd start >&2 || :
+	[ "$ipv" = 6 ] || ipv=
+
+    dhcp_daemon_status "$ipv" && return 0
+
+    /sbin/chkconfig "dhcpd$ipv" on
+    /sbin/service "dhcpd$ipv" start >&2 || :
 }
 
 dhcp_daemon_off()
 {
-    /sbin/service dhcpd condstop >&2
-    /sbin/chkconfig dhcpd off
+	local ipv="${1-}"
+
+	[ "$ipv" = 6 ] || ipv=
+
+    /sbin/service "dhcpd$ipv" condstop >&2
+    /sbin/chkconfig "dhcpd$ipv" off
 }
 
 dhcp_daemon_condreload()
 {
-    /sbin/service dhcpd condreload
+	local ipv="${1-}"
+
+	[ "$ipv" = 6 ] || ipv=
+
+    /sbin/service "dhcpd$ipv" condreload
 }
 
 ### config file
 
 dhcp_config_get()
 {
-    shell_config_get "$dhcp_generalconf_file" "$1"
+	local var="$1"; shift
+	local ipv="${1-}"
+	local conf_file=
+
+	[ "$ipv" = 6 ] || ipv=
+
+	eval "conf_file=\$dhcp${ipv}_generalconf_file"
+    shell_config_get "$conf_file" "$var"
 }
 
 dhcp_config_set()
 {
-    shell_config_set "$dhcp_generalconf_file" "$1" "$2"
+	local var="$1"; shift
+	local value="$1"; shift
+	local ipv="${1-}"
+	local conf_file=
+
+	[ "$ipv" = 6 ] || ipv=
+
+	eval "conf_file=\$dhcp${ipv}_generalconf_file"
+    shell_config_set "$conf_file" "$var" "$value"
 }
 
 dhcp_update_config()
 {
-    alterator-dhcp-reset && dhcp_daemon_condreload || :
+	local ipv="${1-}"
+    alterator-dhcp-reset "$ipv" && dhcp_daemon_condreload "$ipv" || :
 }
 
 #### leases
 
 dhcp_lease_list()
 {
+	local ipv="${1-}"
+	local lease_file=
+
+	[ "$ipv" = 6 ] || ipv=
+	eval "lease_file=\$dhcp${ipv}_lease_file"
+
     /bin/awk \
 	'BEGIN { OFS = "_"}
 
@@ -67,19 +106,24 @@ dhcp_lease_list()
 	match($0,/^[[:space:]]*client-hostname[[:space:]]+"([^;"]+)"[[:space:]]*;[[:space:]]*$/,re) { r["hostname"]=re[1]; }
 
 	/^[[:space:]]*}[[:space:]]*$/	{ if (r["state"] == "active") print r["ip"],r["hw"],r["expired"],r["hostname"]; for (i in r) delete r[i]; } ' \
-	"$dhcp_lease_file"
+	"$lease_file"
 }
 
 dhcp_lease_remove()
 {
     local ip="$1";shift
+	local ipv="${1-}"
+	local lease_file=
 
-    dhcp_daemon_status
+	[ "$ipv" = 6 ] || ipv=
+	eval "lease_file=\$dhcp${ipv}_lease_file"
+
+    dhcp_daemon_status "$ipv"
     local running="$?"
-    /sbin/service dhcpd condstop >&2
+    /sbin/service "dhcpd$ipv" condstop >&2
 
     sed "/^[[:space:]]*lease[[:space:]]\+$(quote_sed_regexp "$ip")[[:space:]]\+{/,/^[[:space:]]*}[[:space:]]*$/ d" \
-	-i "$dhcp_lease_file"
+	-i "$lease_file"
 
-    [ "$running" = "0" ] && /sbin/service dhcpd start >&2
+    [ "$running" = "0" ] && /sbin/service "dhcpd$ipv" start >&2
 }
