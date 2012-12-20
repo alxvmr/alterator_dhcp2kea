@@ -4,6 +4,7 @@ dhcp_generalconf_file="/etc/alterator/dhcp/general"
 dhcp6_generalconf_file="/etc/alterator/dhcp6/general"
 dhcp_lease_file="/var/lib/dhcp/dhcpd/state/dhcpd.leases"
 dhcp6_lease_file="/var/lib/dhcp/dhcpd6/state/dhcpd6.leases"
+_radvd="/usr/sbin/radvd"
 
 . shell-config
 . shell-quote
@@ -32,7 +33,11 @@ dhcp_daemon_on()
 {
 	local ipv="${1-}"
 
-	[ "$ipv" = 6 ] || ipv=
+	if [ "$ipv" = 6 ]; then
+		[ -x "$_radvd" ] || return 1
+	else
+		ipv=
+	fi
 
     dhcp_daemon_status "$ipv" && return 0
 
