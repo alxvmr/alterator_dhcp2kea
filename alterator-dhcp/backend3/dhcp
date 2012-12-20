@@ -14,6 +14,7 @@ ddns_add_tool="/usr/sbin/ddns-add-host"
 ddns_del_tool="/usr/sbin/ddns-del-host"
 ddns_check_tool="/usr/sbin/ddns-check-name"
 hooks_dir=/usr/lib/alterator/hooks/dhcp.d
+_radvd=/usr/sbin/radvd
 
 ### helpers
 get_static_conf()
@@ -289,6 +290,11 @@ on_message()
 		write)
 		    case "$in__objects" in
 		    /)
+			if [ "$in_ipv" = 6 ]; then
+				[ -x "$_radvd" ] ||
+					write_error "`_ "Radvd is not installed! DHCPv6 can't work properly"`"
+			fi
+
 			if [ -n "$in_general" -a -n "$in_iface" ];then
 			    local old_iface="$(dhcp_config_get iface "$in_ipv")" # previous value of iface
 			    local new_iface="$in_iface" # new value of iface
