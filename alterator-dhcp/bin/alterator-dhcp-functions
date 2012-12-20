@@ -20,6 +20,12 @@ dhcp_daemon_status()
 
     LANG=C LC_ALL=C /sbin/chkconfig --list "dhcpd$ipv" |grep -qs "${runlevel}:on" || return 1
     /sbin/service "dhcpd$ipv" status >/dev/null || return 1
+	if [ "$ipv" = 6 ]; then
+		LANG=C LC_ALL=C /sbin/chkconfig --list radvd |grep -qs "${runlevel}:on" || return 1
+		/sbin/service radvd status >/dev/null || return 1
+	fi
+
+	return 0
 }
 
 dhcp_daemon_on()
@@ -32,6 +38,12 @@ dhcp_daemon_on()
 
     /sbin/chkconfig "dhcpd$ipv" on
     /sbin/service "dhcpd$ipv" start >&2 || :
+
+	# Enable radvd too
+	if [ "$ipv" = 6 ]; then
+		/sbin/chkconfig radvd on
+	    /sbin/service radvd start >&2 || :
+	fi
 }
 
 dhcp_daemon_off()
@@ -42,6 +54,11 @@ dhcp_daemon_off()
 
     /sbin/service "dhcpd$ipv" condstop >&2
     /sbin/chkconfig "dhcpd$ipv" off
+	# Disable radvd too
+	if [ "$ipv" = 6 ]; then
+		/sbin/service radvd condstop >&2
+		/sbin/chkconfig radvd off
+	fi
 }
 
 dhcp_daemon_condreload()
@@ -51,6 +68,10 @@ dhcp_daemon_condreload()
 	[ "$ipv" = 6 ] || ipv=
 
     /sbin/service "dhcpd$ipv" condreload
+	# Reload radvd too
+	if [ "$ipv" = 6 ]; then
+		/sbin/service radvd condreload
+	fi
 }
 
 ### config file
