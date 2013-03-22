@@ -6,6 +6,7 @@ dhcp_lease_file="/var/lib/dhcp/dhcpd/state/dhcpd.leases"
 dhcp6_lease_file="/var/lib/dhcp/dhcpd6/state/dhcpd6.leases"
 _radvd="/usr/sbin/radvd"
 
+. alterator-service-functions
 . shell-config
 . shell-quote
 
@@ -15,15 +16,14 @@ dhcp_daemon_status()
 {
 	local ipv="${1-}"
     local IFS=' '
-    local runlevel="$(/sbin/runlevel | cut -c3)"
 
 	[ "$ipv" = 6 ] || ipv=
 
-    LANG=C LC_ALL=C /sbin/chkconfig --list "dhcpd$ipv" |grep -qs "${runlevel}:on" || return 1
-    /sbin/service "dhcpd$ipv" status >/dev/null || return 1
+	service_control "dhcpd$ipv" is-enabled || return 1
+    service_control "dhcpd$ipv" is-active || return 1
 	if [ "$ipv" = 6 ]; then
-		LANG=C LC_ALL=C /sbin/chkconfig --list radvd |grep -qs "${runlevel}:on" || return 1
-		/sbin/service radvd status >/dev/null || return 1
+		service_control radvd is-enabled || return 1
+		service_control radvd is-active || return 1
 	fi
 
 	return 0
@@ -41,13 +41,13 @@ dhcp_daemon_on()
 
     dhcp_daemon_status "$ipv" && return 0
 
-    /sbin/chkconfig "dhcpd$ipv" on
-    /sbin/service "dhcpd$ipv" start >&2 || :
+    service_control "dhcpd$ipv" enable &&
+    service_control "dhcpd$ipv" start ||:
 
 	# Enable radvd too
 	if [ "$ipv" = 6 ]; then
-		/sbin/chkconfig radvd on
-	    /sbin/service radvd start >&2 || :
+		service_control radvd on &&
+	    service_control radvd start ||:
 	fi
 }
 
@@ -57,12 +57,12 @@ dhcp_daemon_off()
 
 	[ "$ipv" = 6 ] || ipv=
 
-    /sbin/service "dhcpd$ipv" condstop >&2
-    /sbin/chkconfig "dhcpd$ipv" off
+    service_control "dhcpd$ipv" condstop ||:
+    service_control "dhcpd$ipv" disable ||:
 	# Disable radvd too
 	if [ "$ipv" = 6 ]; then
-		/sbin/service radvd condstop >&2
-		/sbin/chkconfig radvd off
+		service_control radvd condstop ||:
+		service_control radvd disable ||:
 	fi
 }
 
@@ -72,10 +72,10 @@ dhcp_daemon_condreload()
 
 	[ "$ipv" = 6 ] || ipv=
 
-    /sbin/service "dhcpd$ipv" condreload
+    service_control "dhcpd$ipv" condreload
 	# Reload radvd too
 	if [ "$ipv" = 6 ]; then
-		/sbin/service radvd condreload
+		service_control radvd condreload
 	fi
 }
 
@@ -146,10 +146,10 @@ dhcp_lease_remove()
 
     dhcp_daemon_status "$ipv"
     local running="$?"
-    /sbin/service "dhcpd$ipv" condstop >&2
+    service_control "dhcpd$ipv" condstop
 
     sed "/^[[:space:]]*lease[[:space:]]\+$(quote_sed_regexp "$ip")[[:space:]]\+{/,/^[[:space:]]*}[[:space:]]*$/ d" \
 	-i "$lease_file"
 
-    [ "$running" = "0" ] && /sbin/service "dhcpd$ipv" start >&2
+    [ "$running" = "0" ] && service_control "dhcpd$ipv" start
 }

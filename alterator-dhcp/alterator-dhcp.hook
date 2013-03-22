@@ -5,6 +5,7 @@ ipv4_static_conf=/etc/alterator/dhcp/static
 ipv6_general_conf=/etc/alterator/dhcp6/general
 ipv6_static_conf=/etc/alterator/dhcp6/static
 
+. alterator-service-functions
 . shell-config
 
 dhcpd_stop()
@@ -14,7 +15,7 @@ dhcpd_stop()
 	local static_conf="$1"; shift
 
     rm -f -- "$general_conf" "$static_conf"
-    /sbin/service "$dhcp_daemon" condstop
+    service_control "$dhcp_daemon" condstop
 }
 
 
