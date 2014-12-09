@@ -86,7 +86,10 @@
 		(ui-lease-read)))))
 
 (define (init)
-  (form-update-enum "ipv" (woo-list "/dhcp/ipv" 'language (form-value "language")))
+  (let ((available-ip-versions (woo-list "/dhcp/ipv" 'language (form-value "language"))))
+	(form-update-enum "ipv" available-ip-versions)
+	;; Don't show IP version selector if only one IP version is available
+    (form-update-visibility "area-ipv-select" (not (= (length available-ip-versions) 1))))
   (form-update-value "ipv" "4")
   (form-update-enum "client_time" (woo-list "/dhcp/avail_time" 'language (form-value "language")))
   (update-ui)
