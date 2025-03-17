@@ -1,11 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-<!-- dhcp administration module -->
+<!-- kea administration module -->
 <html wf="none">
   <body>
     <form method="POST">
 	<div name="nostatic_page" class="alterator-attention-message" style="float:none;display:none">
 	    <img src="/design/images/attention.gif"/>
-	    <span translate="_">You must have statically configured ethernet interface to setup dhcp server.</span>
+	    <span translate="_">You must have statically configured ethernet interface to setup kea server.</span>
 	    <br/>
 	    <br/>
 	    <a href="/net-eth"><span translate="_">Reconfigure ethernet interfaces...</span></a>
@@ -29,7 +29,7 @@
 		</tr>
 	    <tr>
 		<td>&nbsp;</td>
-		<td><input type="checkbox" name="daemon" value="#t"/><span translate="_">Enable DHCP server</span></td>
+		<td><input type="checkbox" name="daemon" value="#t"/><span translate="_">Enable Kea server</span></td>
 	    </tr>
 	    <tr>
 		<td colspan="2">&nbsp;</td>
@@ -51,7 +51,7 @@
 	    </tr>
 	    <tr>
 		<td><span translate="_">Address  expiration time:</span></td>
-		<td><select name="client_time" enumref="/dhcp/avail_time"/></td>
+		<td><select name="client_time" enumref="/kea/avail_time"/></td>
 	    </tr>
 	    <tr>
 		<td colspan="2">&nbsp;</td>
@@ -101,7 +101,7 @@
 		</thead>
 		<tbody>
 		    <tr style="display:none">
-			<td><a class="alterator-href" prefix-href="/dhcp/static?mac=" name="name">
+			<td><a class="alterator-href" prefix-href="/kea/static?mac=" name="name">
 				<span class="alterator-label" name="static_ip"/>
 			    </a>
 			</td>
