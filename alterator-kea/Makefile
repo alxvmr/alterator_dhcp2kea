@@ -15,5 +15,5 @@ install-data:
 	touch $(sysconfdir)/alterator/kea6/static
 	install -Dpm755 bin/alterator-kea-reset $(bindir)/alterator-kea-reset
 	install -Dpm644 bin/alterator-kea-functions $(bindir)/alterator-kea-functions
-	install -Dpm 755 alterator-dhcp.hook $(libexecdir)/alterator/hooks/net-eth.d/alterator-dhcp
-	install -dpm 755 $(libexecdir)/alterator/hooks/dhcp.d/
+	install -Dpm 755 alterator-kea.hook $(libexecdir)/alterator/hooks/net-eth.d/alterator-kea
+	install -dpm 755 $(libexecdir)/alterator/hooks/kea.d/
