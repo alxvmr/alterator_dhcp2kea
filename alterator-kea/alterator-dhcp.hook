@@ -1,9 +1,9 @@
 #!/bin/sh
 
-ipv4_general_conf=/etc/alterator/dhcp/general
-ipv4_static_conf=/etc/alterator/dhcp/static
-ipv6_general_conf=/etc/alterator/dhcp6/general
-ipv6_static_conf=/etc/alterator/dhcp6/static
+ipv4_general_conf=/etc/alterator/kea/general
+ipv4_static_conf=/etc/alterator/kea/static
+ipv6_general_conf=/etc/alterator/kea6/general
+ipv6_static_conf=/etc/alterator/kea6/static
 
 . alterator-service-functions
 . shell-config
@@ -18,16 +18,15 @@ dhcpd_stop()
     service_control "$dhcp_daemon" condstop
 }
 
-
-ipv4_dhcp_iface="$(shell_config_get "$ipv4_general_conf" iface)"
-ipv6_dhcp_iface="$(shell_config_get "$ipv6_general_conf" iface)"
+ipv4_kea_iface="$(shell_config_get "$ipv4_general_conf" iface)"
+ipv6_kea_iface="$(shell_config_get "$ipv6_general_conf" iface)"
 
 old_ipv4="$(echo "$old_ipv4addresses" | head -1)"
 new_ipv4="$(echo "$new_ipv4addresses" | head -1)"
 old_ipv6="$(echo "$old_ipv6addresses" | head -1)"
 new_ipv6="$(echo "$new_ipv6addresses" | head -1)"
 
-if [ -n "$ipv4_dhcp_iface" -a "$ipv4_dhcp_iface" = "$1" ]; then
+if [ -n "$ipv4_kea_iface" -a "$ipv4_kea_iface" = "$1" ]; then
 	if [ "$new_config_ipv4" = no -o \
 			"$new_ipv4configuration" = "dhcp" -o \
 			"$new_ipv4configuration" = "ipv4ll" -o \
@@ -36,7 +35,7 @@ if [ -n "$ipv4_dhcp_iface" -a "$ipv4_dhcp_iface" = "$1" ]; then
 	fi
 fi
 
-if [ -n "$ipv6_dhcp_iface" -a "$ipv6_dhcp_iface" = "$1" ]; then
+if [ -n "$ipv6_kea_iface" -a "$ipv6_kea_iface" = "$1" ]; then
 	if [ "$new_config_ipv6" = no -o \
 			"$new_ipv6configuration" = "dhcp" -o \
 			"$old_ipv6" != "$new_ipv6" ]; then
