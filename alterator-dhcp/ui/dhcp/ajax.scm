@@ -1,4 +1,4 @@
-(define-module (ui dhcp ajax)
+(define-module (ui kea ajax)
     :use-module (alterator ajax)
     :use-module (alterator woo)
     :export (init))
@@ -8,7 +8,7 @@
 (define (ui-general-read)
   (catch/message
     (lambda()
-      (let ((data (woo-read-first "/dhcp" 'ipv (form-value "ipv"))))
+      (let ((data (woo-read-first "/kea" 'ipv (form-value "ipv"))))
 	(form-update-value-list *parameters* data)
 	(form-update-visibility
 	  '("client_dns" "client_search")
@@ -17,7 +17,7 @@
 (define (ui-general-write)
   (catch/message
     (lambda()
-      (apply woo-write "/dhcp"
+      (apply woo-write "/kea"
              'general #t
 			 'ipv (form-value "ipv")
              'language (form-value "language")
@@ -28,13 +28,13 @@
   (form-update-value "new_static_ip" "")
   (form-update-value "new_static_mac" "")
   (form-update-value "new_static_hname" "")
-  (form-update-enum "static_name" (woo-list "/dhcp/avail_static" 'ipv (form-value "ipv"))))
+  (form-update-enum "static_name" (woo-list "/kea/avail_static" 'ipv (form-value "ipv"))))
 
 ;; note: iface, ip_start and ip_end are used for config validation
 (define (ui-static-del)
   (catch/message
     (lambda()
-      (apply woo-write "/dhcp"
+      (apply woo-write "/kea"
              'static_del #t
 			 'ipv (form-value "ipv")
              'language (form-value "language")
@@ -46,7 +46,7 @@
 (define (ui-static-add)
   (catch/message
     (lambda()
-      (apply woo-write "/dhcp"
+      (apply woo-write "/kea"
              'static_add #t
 			 'ipv (form-value "ipv")
              'language (form-value "language")
@@ -55,12 +55,12 @@
       (ui-static-read))))
 
 (define (ui-lease-read)
-  (form-update-enum "lease_name" (woo-list "/dhcp/avail_lease" 'ipv (form-value "ipv"))))
+  (form-update-enum "lease_name" (woo-list "/kea/avail_lease" 'ipv (form-value "ipv"))))
 
 (define (ui-lease-fix)
   (catch/message
     (lambda()
-      (apply woo-write "/dhcp"
+      (apply woo-write "/kea"
             'lease_fix #t
 			'ipv (form-value "ipv")
             'language (form-value "language")
@@ -71,7 +71,7 @@
 
 (define (update-ui)
   (let* ((ipv (form-value "ipv"))
-		 (iface-list (woo-list "/dhcp/avail_iface" 'ipv ipv 'language (form-value "language"))))
+		 (iface-list (woo-list "/kea/avail_iface" 'ipv ipv 'language (form-value "language"))))
 	(if (null? iface-list)
 	  (begin
 		(form-update-visibility "nostatic_page" #t)
@@ -86,12 +86,12 @@
 		(ui-lease-read)))))
 
 (define (init)
-  (let ((available-ip-versions (woo-list "/dhcp/ipv" 'language (form-value "language"))))
+  (let ((available-ip-versions (woo-list "/kea/ipv" 'language (form-value "language"))))
 	(form-update-enum "ipv" available-ip-versions)
 	;; Don't show IP version selector if only one IP version is available
     (form-update-visibility "area-ipv-select" (not (= (length available-ip-versions) 1))))
   (form-update-value "ipv" "4")
-  (form-update-enum "client_time" (woo-list "/dhcp/avail_time" 'language (form-value "language")))
+  (form-update-enum "client_time" (woo-list "/kea/avail_time" 'language (form-value "language")))
   (update-ui)
   ;; buttons
   (form-bind "apply_button" "click" ui-general-write)
