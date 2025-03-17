@@ -1,10 +1,10 @@
 %define _altdata_dir %_datadir/alterator
 
-Name: alterator-dhcp
+Name: alterator-kea
 Version: 0.9.6
 Release: alt1
 
-Summary: alterator module for dhcp conf file editing
+Summary: alterator module for kea conf file editing
 License: GPL
 Group: System/Configuration/Other
 Url: http://wiki.sisyphus.ru/Alterator
@@ -26,7 +26,7 @@ BuildPreReq: alterator >= 4.10-alt1
 BuildRequires: alterator
 
 %description
-DHCP configuration alterator module
+Kea configuration alterator module
 
 %prep
 %setup -q
@@ -39,8 +39,8 @@ DHCP configuration alterator module
 
 %files
 %_bindir/*
-%config(noreplace) %_sysconfdir/alterator/dhcp
-%config(noreplace) %_sysconfdir/alterator/dhcp6
+%config(noreplace) %_sysconfdir/alterator/kea
+%config(noreplace) %_sysconfdir/alterator/kea6
 %_altdata_dir/applications/*
 %_altdata_dir/ui/*
 %_altdata_dir/type/*
