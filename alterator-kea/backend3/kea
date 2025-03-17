@@ -4,12 +4,12 @@ alterator_api_version=1
 
 . alterator-sh-functions
 . alterator-net-functions
-. alterator-dhcp-functions
+. alterator-kea-functions
 
 . shell-quote
 
-static_conf_ipv4="/etc/alterator/dhcp/static"
-static_conf_ipv6="/etc/alterator/dhcp6/static"
+static_conf_ipv4="/etc/alterator/kea/static"
+static_conf_ipv6="/etc/alterator/kea6/static"
 ddns_add_tool="/usr/sbin/ddns-add-host"
 ddns_del_tool="/usr/sbin/ddns-del-host"
 ddns_check_tool="/usr/sbin/ddns-check-name"
