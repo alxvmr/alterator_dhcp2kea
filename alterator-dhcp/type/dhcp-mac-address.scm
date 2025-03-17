@@ -9,4 +9,4 @@
 (define (type v _)
   (or (and (string? v) (string-null? v))
       (and (string? v) (regexp-exec *mac-address-regex* v))
-      (type-error (_ "invalid MAC address" "alterator-dhcp"))))
+      (type-error (_ "invalid MAC address" "alterator-kea"))))
