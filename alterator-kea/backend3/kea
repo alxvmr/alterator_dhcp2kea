@@ -185,12 +185,12 @@ on_message()
 			write_type_item	ipv				integer
 		    write_type_item	ip_start		ip-address
 		    write_type_item	ip_end			ip-address
-		    write_type_item	client_dns		dhcp-dns-address
+		    write_type_item	client_dns		kea-dns-address
 		    write_type_item	client_search		hostname
 		    write_type_item	client_gw		ipv4-address
 		    write_type_item	new_static_ip		ip-address
 		    write_type_item	new_static_hname	system-computer-name
-		    write_type_item	new_static_mac		dhcp-mac-address
+		    write_type_item	new_static_mac		kea-mac-address
 		    ;;
 		list)
 		    case "$in__objects" in
