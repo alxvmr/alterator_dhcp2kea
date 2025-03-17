@@ -109,7 +109,7 @@ dhcp_config_set()
 dhcp_update_config()
 {
 	local ipv="${1-}"
-    alterator-dhcp-reset "$ipv" && dhcp_daemon_condreload "$ipv" || :
+    alterator-kea-reset "$ipv" && dhcp_daemon_condreload "$ipv" || :
 }
 
 #### leases
