@@ -13,7 +13,7 @@ static_conf_ipv6="/etc/alterator/kea6/static"
 ddns_add_tool="/usr/sbin/ddns-add-host"
 ddns_del_tool="/usr/sbin/ddns-del-host"
 ddns_check_tool="/usr/sbin/ddns-check-name"
-hooks_dir=/usr/lib/alterator/hooks/dhcp.d
+hooks_dir=/usr/lib/alterator/hooks/kea.d
 _radvd=/usr/sbin/radvd
 
 ### helpers
