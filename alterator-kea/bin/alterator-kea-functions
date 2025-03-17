@@ -1,7 +1,7 @@
 #!/bin/sh -efu
 
-dhcp_generalconf_file="/etc/alterator/dhcp/general"
-dhcp6_generalconf_file="/etc/alterator/dhcp6/general"
+dhcp_generalconf_file="/etc/alterator/kea/general"
+dhcp6_generalconf_file="/etc/alterator/kea6/general"
 dhcp_lease_file="/var/lib/dhcp/dhcpd/state/dhcpd.leases"
 dhcp6_lease_file="/var/lib/dhcp/dhcpd6/state/dhcpd6.leases"
 _radvd="/usr/sbin/radvd"
@@ -109,7 +109,7 @@ dhcp_config_set()
 dhcp_update_config()
 {
 	local ipv="${1-}"
-    alterator-dhcp-reset "$ipv" && dhcp_daemon_condreload "$ipv" || :
+    alterator-kea-reset "$ipv" && dhcp_daemon_condreload "$ipv" || :
 }
 
 #### leases
