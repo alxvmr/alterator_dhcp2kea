@@ -1,10 +1,10 @@
 #!/bin/sh -efu
 
-ipv4_general_conf="/etc/alterator/dhcp/general"
-ipv4_static_conf="/etc/alterator/dhcp/static"
+ipv4_general_conf="/etc/alterator/kea/general"
+ipv4_static_conf="/etc/alterator/kra/static"
 ipv4_dhcpd_conf="/etc/dhcp/dhcpd.conf"
-ipv6_general_conf="/etc/alterator/dhcp6/general"
-ipv6_static_conf="/etc/alterator/dhcp6/static"
+ipv6_general_conf="/etc/alterator/kea6/general"
+ipv6_static_conf="/etc/alterator/kea6/static"
 ipv6_dhcpd_conf="/etc/dhcp/dhcpd6.conf"
 radvd_conf="/etc/radvd.conf"
 ddns_tool="/usr/sbin/dhcp-print-config"
