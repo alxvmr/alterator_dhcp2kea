@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Categories=X-Alterator-Servers
+Icon=kea
+Terminal=false
+Name=Kea server
+X-Alterator-URI=/kea
+X-Alterator-UI=html
+X-Alterator-Help=kea
+Name[ru]=Kea-сервер
+Name[uk]=Kea-сервер
+Name[pt_BR]=Servidor Kea
